@@ -94,6 +94,6 @@ public class ChatHub : Hub<IChatEvents>
 }
 ```
 
-### check the schema file
+### Check your generated schema file
 
 When you call up the url '<https://yourHost:yourPort>/sigger/sigger.json' in your browser, you can now view the schema file for your hub definition.
