@@ -6,6 +6,10 @@ The name is derived from swagger but for signalR.
 
 ## What is Sigger
 
+>
+> **Important: Sigger just supports .net6 or higher**
+>
+
 Sigger consists of two parts. 
 
  - One is the backend part, which is responsible for parsing the SignalR hubs and generating the schema 
@@ -19,7 +23,6 @@ Sigger consists of two parts.
  
  ## Getting started
  
- > **Important: Sigger just supports .net6 or higher**
 
 ### Create an asp.net 6 App
 First you need a **.net6** ASP.net application. E.g. https://docs.microsoft.com/en-us/visualstudio/get-started/csharp/tutorial-aspnet-core.
