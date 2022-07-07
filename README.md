@@ -23,7 +23,13 @@ Sigger consists of two parts.
 
 ### Create an asp.net 6 App
 First you need a **.net6** ASP.net application. E.g. https://docs.microsoft.com/en-us/visualstudio/get-started/csharp/tutorial-aspnet-core.
- 
+
+### Include the sigger nuget Package
+
+```
+TODO: nuget package is not currently deployed
+```
+
 ### Configure Sigger Services
 Add the Sigger Services to your Startup-Code (Program.cs or Startup.cs) 
 
