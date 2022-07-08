@@ -126,7 +126,7 @@ Enter the following commands to create the Angular application.
 # ... wait a little eternity
 > cd your-ng-name
 > npm i @microsoft/signalr --save
-> npm i sigger-gen --save --include=dev
+> npm i sigger-gen --save-dev
 ```
 Now you should be able to start the angular application
 ```
