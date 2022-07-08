@@ -33,50 +33,15 @@ First you need a **.net6** ASP.net application. E.g. https://docs.microsoft.com/
 TODO: nuget package is not currently deployed
 ```
 
-### Configure Sigger Services
-Add the Sigger Services to your Startup-Code (Program.cs or Startup.cs) 
+### Create a Hub
+Create a new file in your project e.g. `ChatHub`. 
+I always prefer the directory structure `/hubs/hubname without hub/hubname.cs` for my projects.
 
 ```
-using Sigger.Generator;
+using Microsoft.AspNetCore.SignalR;
 
-var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddSigger();
-```
-or
+namespace Sigger.Web.GettingStarted.Hubs.Chat;
 
-```
-using Sigger.Generator;
-
-public class Startup
-{
-  public void ConfigureServices(IServiceCollection services)
-  {
-    services.AddSigger();
-  }
-}
-```
-
-### Configure Middleware
-```
-var app = builder.Build();
-app.UseSigger(o => o
-    .WithHub<ChatHub>("/hubs/v1/chat")
-);
-
-```
-or
-
-```
-public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-{
-  app.UseSigger(o => o
-    .WithHub<ChatHub>("/hubs/v1/chat")
-}
-```
-
-### Create the Hub
-
-```
 public interface IChatEvents
 {
     Task OnMessageReceived(string user, string message);
@@ -86,14 +51,58 @@ public class ChatHub : Hub<IChatEvents>
 {
     public async Task<bool> SendMessage(string message)
     {
-        // Works only with authentication
-        var user = Context.User.Identity?.Name ?? Context.Current.ConnectionId;
+        // Getting user works only with authentication
+        var user = Context.User?.Identity?.Name ?? Context.UserIdentifier ?? Context.ConnectionId;
         await Clients.All.OnMessageReceived(user, message);
         return true;
     }
 }
 ```
 
+
+### Configure Sigger Services and Middleware
+Add the Sigger Services to your Startup-Code (Program.cs or Startup.cs) 
+
+```
+using Sigger.Generator;
+using Sigger.Web.GettingStarted.Hubs.Chat;
+
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddSigger();
+
+var app = builder.Build();
+
+app.UseSigger(o => o
+    .WithHub<ChatHub>("/hubs/v1/chat")
+);
+
+app.Run();
+```
+or
+
+```
+using Sigger.Generator;
+using Sigger.Web.GettingStarted.Hubs.Chat;
+
+public class Startup
+{
+  public void ConfigureServices(IServiceCollection services)
+  {
+    services.AddSigger();
+  }
+  
+  public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+  {
+    app.UseSigger(o => o
+      .WithHub<ChatHub>("/hubs/v1/chat")
+  }
+}
+```
+
+
 ### Check your generated schema file
 
 When you call up the url '<https://yourHost:yourPort>/sigger/sigger.json' in your browser, you can now view the schema file for your hub definition.
+
+![image](https://user-images.githubusercontent.com/17086780/177941855-c141d279-b99d-4a56-be9d-aee14cc9fb7a.png)
+
