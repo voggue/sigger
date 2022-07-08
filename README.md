@@ -69,13 +69,13 @@ using Sigger.Generator;
 using Sigger.Web.GettingStarted.Hubs.Chat;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddSigger();
+builder.Services.AddSigger(o => o
+    .WithHub<ChatHub>("/hubs/v1/chat")
+);
 
 var app = builder.Build();
 
-app.UseSigger(o => o
-    .WithHub<ChatHub>("/hubs/v1/chat")
-);
+app.UseSigger();
 
 app.Run();
 ```
