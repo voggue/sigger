@@ -217,6 +217,8 @@ export class AppComponent {
 Of course, we also need a user interface for our client. To do this, we open the 
 file `app.component.html` and replace the entire file with the following code:
 
+> Remark: for the sake of simplicity, i have refrained from styling the chat's speech bubbles into own and incoming.
+
 ```
 <style>
   :host {
