@@ -207,7 +207,9 @@ export class AppComponent {
   }
 
   sendMessage(message: string) {
-    this._chatService.sendMessage(message);
+    // don't forget to subscribe
+    this._chatService.sendMessage(message)
+     .subscribe();
   }
 }
 ```
