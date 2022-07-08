@@ -203,7 +203,11 @@ export class AppComponent {
     _chatService.onMessageReceived$.subscribe(x => {
       if (x.user && x.message)
         this.messages$.next([...this.messages$.value, {user: x.user, message: x.message}]);
-    })
+    });
+    
+    // The tryConnect is not always necessary, as the hub establishes a connection on the 1st request. 
+    // In this case, however, we need the connection before the first call in order to receive message events.
+    this._chatService.tryConnect();
   }
 
   sendMessage(message: string) {
