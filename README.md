@@ -320,3 +320,11 @@ file `app.component.html` and replace the entire file with the following code:
 </div>
 
 ```
+
+#### Test the app
+
+now u should be able to chat
+
+![image](https://user-images.githubusercontent.com/17086780/177962575-bc7ce886-131d-4594-8396-b98ea821e917.png)
+
+
