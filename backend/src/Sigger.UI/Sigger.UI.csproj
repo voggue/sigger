@@ -10,7 +10,7 @@
 
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.8" />
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
     </ItemGroup>
 
     <ItemGroup>
@@ -24,6 +24,12 @@
         <EmbeddedResource Include="Resources\style.css" />
         <None Remove="Resources\logo_small.png" />
         <EmbeddedResource Include="Resources\logo_small.png" />
+        <None Remove="Resources\sigger.js" />
+        <EmbeddedResource Include="Resources\sigger.js" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Sigger.Generator\Sigger.Generator.csproj" />
     </ItemGroup>
 
 </Project>

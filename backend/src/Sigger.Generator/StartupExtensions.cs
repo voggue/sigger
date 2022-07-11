@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.Reflection;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Sigger.Generator.Server;
+
 // ReSharper disable UnusedMethodReturnValue.Global
 // ReSharper disable UnusedMember.Global
 
@@ -8,43 +10,32 @@ namespace Sigger.Generator;
 
 public static class StartupExtensions
 {
-    public static IServiceCollection AddSigger(this IServiceCollection services)
+    public static IServiceCollection AddSigger(this IServiceCollection services,
+        Action<SiggerGenOptions>? configure = null)
     {
+        var options = new SiggerGenOptions();
+        configure?.Invoke(options);
+        services.AddSingleton(options);
+
         services.AddSignalR();
         return services;
     }
 
-    public static WebApplicationBuilder AddSigger(this WebApplicationBuilder builder)
+    public static WebApplicationBuilder AddSigger(this WebApplicationBuilder builder,
+        Action<SiggerGenOptions>? configure = null)
     {
-        AddSigger(builder.Services);
+        AddSigger(builder.Services, configure);
         return builder;
     }
 
-    public static IApplicationBuilder UseSigger(this WebApplication builder, Action<SiggerGenOptions>? configure = null)
+    public static IApplicationBuilder UseSigger(this WebApplication builder)
     {
-        var options = new SiggerGenOptions(builder);
-        configure?.Invoke(options);
-
-        // Search Hubs
+        var options = builder.Services.GetRequiredService<SiggerGenOptions>();
         var generator = new SchemaGenerator(options.GenerationOptions);
-        foreach (var hub in options.HubTypes)
-            generator.AddHub(hub);
 
-        // Autodiscover Hubs
-        //  var asm = options.HubAssemblies.ToList().Union(new[] { Assembly.GetEntryAssembly() });
-        // var th = typeof(Hub);
-        // var thg = typeof(Hub<>);
-        // foreach (var a in asm)
-        // {
-        //     if (a == null) continue;
-        //     foreach (var t in a.GetTypes().Where(x => !x.IsAbstract && !x.IsInterface))
-        //     {
-        //         if (t.HasBaseClass(thg, th))
-        //         {
-        //             generator.AddHub(t);
-        //         }
-        //     }
-        // }
+        options.MapHubs(builder);
+        foreach (var hub in options.HubTypes)
+            generator.AddHub(hub.Key);
 
         var doc = generator.CreateSchema();
 

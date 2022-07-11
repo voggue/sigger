@@ -1,7 +1,11 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Resources;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.Extensions.DependencyInjection;
+using Sigger.Generator.Server;
 
 namespace Sigger.UI;
 
@@ -9,13 +13,13 @@ public class SiggerUiMiddleware
 {
     private readonly SiggerUiOptions _options;
     private readonly Dictionary<string, NameTypeContent> _fileContents = new(StringComparer.OrdinalIgnoreCase);
-    private const string INDEX_RESSOURCE_NAME = "Sigger.UI.Resources.index.html";
-    private const string THEME_RESSOURCE_NAME = "Sigger.UI.Resources.theme.css";
-    private const string FAVICON_RESSOURCE_NAME = "Sigger.UI.Resources.favicon.ico";
-    private const string SCREEN_CSS_RESSOURCE_NAME = "Sigger.UI.Resources.screen.css";
-    private const string STYLE_CSS_RESSOURCE_NAME = "Sigger.UI.Resources.style.css";
-    private const string SCRIPT_RESSOURCE_NAME = "Sigger.UI.Resources.script.js";
-    private const string IMAGE_LOGO_RESSOURCE_NAME = "Sigger.UI.Resources.logo_small.png";
+    private const string INDEX_RESOURCE_NAME = "Sigger.UI.Resources.index.html";
+    private const string THEME_RESOURCE_NAME = "Sigger.UI.Resources.theme.css";
+    private const string FAVICON_RESOURCE_NAME = "Sigger.UI.Resources.favicon.ico";
+    private const string SCREEN_CSS_RESOURCE_NAME = "Sigger.UI.Resources.screen.css";
+    private const string STYLE_CSS_RESOURCE_NAME = "Sigger.UI.Resources.style.css";
+    private const string SCRIPT_RESOURCE_NAME = "Sigger.UI.Resources.sigger.js";
+    private const string IMAGE_LOGO_RESOURCE_NAME = "Sigger.UI.Resources.logo_small.png";
 
     public SiggerUiMiddleware(SiggerUiOptions options)
     {
@@ -48,15 +52,15 @@ public class SiggerUiMiddleware
 
     private readonly Dictionary<string, NameType> _fileMapping = new(StringComparer.OrdinalIgnoreCase)
     {
-        { "theme.css", new(THEME_RESSOURCE_NAME, "text/css", false) },
-        { "style.css", new(STYLE_CSS_RESSOURCE_NAME, "text/css", false) },
-        { "screen.css", new(SCREEN_CSS_RESSOURCE_NAME, "text/css", false) },
-        { "script.js", new(SCRIPT_RESSOURCE_NAME, "application/javascript", false) },
-        { "favicon.ico", new(FAVICON_RESSOURCE_NAME, "image/icon", true) },
-        { "logo.png", new(IMAGE_LOGO_RESSOURCE_NAME, "image/png", true) },
-        { "index.html", new(INDEX_RESSOURCE_NAME, "text/html", false) },
-        { "index.htm", new(INDEX_RESSOURCE_NAME, "text/html", false) },
-        { "index", new(INDEX_RESSOURCE_NAME, "text/html", false) },
+        {"theme.css", new(THEME_RESOURCE_NAME, "text/css", false)},
+        {"style.css", new(STYLE_CSS_RESOURCE_NAME, "text/css", false)},
+        {"screen.css", new(SCREEN_CSS_RESOURCE_NAME, "text/css", false)},
+        {"sigger.js", new(SCRIPT_RESOURCE_NAME, "application/javascript", false)},
+        {"favicon.ico", new(FAVICON_RESOURCE_NAME, "image/icon", true)},
+        {"logo.png", new(IMAGE_LOGO_RESOURCE_NAME, "image/png", true)},
+        {"index.html", new(INDEX_RESOURCE_NAME, "text/html", false)},
+        {"index.htm", new(INDEX_RESOURCE_NAME, "text/html", false)},
+        {"index", new(INDEX_RESOURCE_NAME, "text/html", false)},
     };
 
     private bool TryGetFile(HttpContext httpContext, [MaybeNullWhen(false)] out NameTypeContent file)
@@ -65,17 +69,20 @@ public class SiggerUiMiddleware
         var fileName = Path.GetFileName(fullPath);
 
         if (!_fileMapping.TryGetValue(fileName, out var fileContentType))
-            fileContentType = new NameType(INDEX_RESSOURCE_NAME, "text/html", false);
+            fileContentType = new NameType(INDEX_RESOURCE_NAME, "text/html", false);
 
         // currently i use always the same index.html file.
         var resourceName = fileContentType.Name;
         var contentType = fileContentType.ContentType;
 
         if (_fileContents.TryGetValue(resourceName, out file))
-            return true;
+        {
+            if (!_options.IgnoreCaching)
+                return true;
+        }
 
         // load the file content from the resource.
-        object? content = null;
+        object? content;
         try
         {
             using var stream = GetType().Assembly.GetManifestResourceStream(resourceName);
@@ -92,8 +99,8 @@ public class SiggerUiMiddleware
             {
                 using var rd = new StreamReader(stream);
                 var stringContent = rd.ReadToEnd();
-                content = resourceName.Equals(INDEX_RESSOURCE_NAME, StringComparison.OrdinalIgnoreCase)
-                    ? HandlePlaceHolders(stringContent, fullPath)
+                content = resourceName.Equals(INDEX_RESOURCE_NAME, StringComparison.OrdinalIgnoreCase)
+                    ? HandlePlaceHolders(httpContext, stringContent, fullPath)
                     : stringContent;
             }
         }
@@ -116,12 +123,14 @@ public class SiggerUiMiddleware
             contentType = "text/html";
         }
 
-        _fileContents[resourceName] = file = new NameTypeContent(resourceName, contentType, content ?? "#EMPTY#");
+        _fileContents[resourceName] = file = new NameTypeContent(contentType, content);
         return true;
     }
 
-    private string HandlePlaceHolders(string content, string fullPath)
+    private string HandlePlaceHolders(HttpContext context, string content, string fullPath)
     {
+        var genOptions = context.RequestServices.GetRequiredService<SiggerGenOptions>();
+
         var ext = Path.GetExtension(fullPath);
 
         // if no extension is available, we assume it is the index file
@@ -131,11 +140,15 @@ public class SiggerUiMiddleware
             : $"{string.Join("/", fullPath.Split('/').SkipLast(1))}";
 
         directory = directory.TrimEnd('/');
-
-        return content.Replace("{{directory}}", directory, StringComparison.OrdinalIgnoreCase);
+        var uri = new Uri(context.Request.GetDisplayUrl());
+        var url = uri.GetLeftPart(UriPartial.Authority) + genOptions.Path.ToLower();
+        var sb = StringComparison.OrdinalIgnoreCase;
+        return content
+            .Replace("{{directory}}", directory, sb)
+            .Replace("{{url}}", url, sb);
     }
 
     private record NameType(string Name, string ContentType, bool Binary);
 
-    private record NameTypeContent(string Name, string ContentType, object Content);
+    private record NameTypeContent(string ContentType, object Content);
 }
