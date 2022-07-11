@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\Sigger.Generator\Sigger.Generator.csproj" />
+      <ProjectReference Include="..\..\src\Sigger.UI\Sigger.UI.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="ngGettingStarted\sigger-getting-started\src\hubs" />
+    </ItemGroup>
+
+</Project>

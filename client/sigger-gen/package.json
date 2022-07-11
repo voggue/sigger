@@ -1,0 +1,27 @@
+{
+  "name": "sigger-gen",
+  "version": "1.0.2",
+  "type": "module",
+  "description": "Generates stubs für sigger hub definition (SignalR definition language)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "sigger": "sigger-gen https://localhost:7291/sigger/sigger.json ./src/hubs -v -f angular"
+  },
+  "bin": {
+    "sigger-gen": "./bin/cli.js"
+  },
+  "keywords": [
+    "SignalR",
+    "Sigger",
+    "CodeGen",
+    "dotnet"
+  ],
+  "author": "voggue",
+  "license": "MIT",
+  "dependencies": {
+    "find-up": "^6.3.0",
+    "meow": "^10.1.3",
+    "node-fetch": "^3.2.6"
+  }
+}

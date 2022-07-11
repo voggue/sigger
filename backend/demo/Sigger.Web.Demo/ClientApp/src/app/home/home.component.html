@@ -1,0 +1,55 @@
+<h1> Chat Hub </h1>
+
+<div *ngIf="error$ | async as error" style="border: 2px solid red">
+  {{ error | json }}
+</div>
+
+<div *ngIf="(currentUser$ | async) as currentUser; else loginSection" style="display: flex; flex-direction: column;">
+
+  <div style="display:flex">
+    <h2 style="flex-grow: 1">{{ currentUser?.name }} <span style="font-size: 1rem; font-weight: 200;">(
+      <span style="font-weight: bold;">{{ currentUser | formatUserRole }}</span>; ID: {{ currentUser?.uid?.slice(-3) }} )</span>
+    </h2>
+    <div>
+      <button (click)="clear()">Clear</button>
+      <button (click)="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div style="display: flex;">
+    <div style="margin-right: 1rem;">
+      <app-rooms></app-rooms>
+    </div>
+
+    <div style="flex-grow: 1;">
+      <div style="border: 1px solid gray; height: 15rem; overflow: auto;">
+        <div *ngFor="let m of (messages$ | async)" style="display: flex; margin-top: 3px;">
+
+          <div [style]="{'border-color': m.user?.color ?? 'black', 'color': m.user?.color ?? 'black'}"
+            style="font-size: 0.8rem; padding: 3px 5px; border: 1px solid; background-color: #B5DDBC; margin-right: 5px">
+            {{ m.user?.name }} {{ m.user?.uid?.slice(-3)}} </div>
+
+            <div *ngIf="m.room" [style]="{'border-color': m.user?.color ?? 'black', 'color': m.user?.color ?? 'black'}"
+            style="font-size: 0.8rem; padding: 3px 5px; border: 1px solid; background-color: #B5DDBC; margin-right: 5px">
+            {{ m.room }} </div>
+
+            <div [style]="{'border-color': m.user?.color ?? 'black', 'color': m.user?.color ?? 'black'}"
+            style="flex-grow: 1; padding: 3px 5px; border: 1px solid; ">{{ m.message }}</div>
+        </div>
+      </div>
+
+      <div style="margin-top: 5px; display: flex;">
+        <input #messageText style="flex-grow: 1;" (keyup.enter)="send(messageText.value); messageText.value='';" />
+        <button (click)="send(messageText.value)">Send</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #loginSection>
+  <input type="text" required #loginName />
+  <select #selectedColor>
+    <option *ngFor="let color of colors" [ngStyle]="{'background-color': color}" [value]="color">{{color}}</option>
+  </select>
+  <button (click)="login(loginName.value, selectedColor.value)">Login</button>
+</ng-template>

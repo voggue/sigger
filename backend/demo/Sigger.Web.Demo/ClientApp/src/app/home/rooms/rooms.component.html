@@ -1,0 +1,48 @@
+<div *ngIf="currentRoom$ | async as currentRoom; else broadcastView" style="display: flex; flex-direction: column;">
+  <div>
+    <h5>{{ currentRoom?.name }} </h5>
+  </div>
+  <div>
+    <div *ngFor="let member of (currentRoom?.members ?? [])">
+      <div style="display: flex; border-bottom: 1px solid gray;">
+        <div style="display: flex; flex-direction: column; flex-grow: 1;">
+          <div style="font-size: 1.2rem">{{ member.name }}</div>
+          <div style="font-size: 0.7rem; color: gray;">id: {{member.uid.slice(-5)}}</div>
+        </div>
+        <div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <button (click)="unsubscribeForRoom(currentRoom?.uid ?? '')">Leave {{currentRoom?.name}}</button>
+    </div>
+  </div>
+</div>
+
+
+
+<ng-template #broadcastView>
+  <div style="display: flex; flex-direction: column;">
+    <div>
+      <h5>Chat-Rooms</h5>
+    </div>
+    <div>
+      <div *ngFor="let room of (rooms$ | async)">
+        <div style="display: flex; border-bottom: 1px solid gray;">
+          <div style="display: flex; flex-direction: column; flex-grow: 1;">
+            <div style="font-size: 1.2rem">{{ room.name }}</div>
+            <div style="font-size: 0.7rem; color: gray;">id: {{room.uid.slice(-5)}}</div>
+          </div>
+
+          <div>
+            <button (click)="subscribeForRoom(room.uid)">Join</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <input type="text" #roomName />
+      <button (click)="createRoom(roomName.value); roomName.value = ''">Create Room</button>
+    </div>
+  </div>
+</ng-template>

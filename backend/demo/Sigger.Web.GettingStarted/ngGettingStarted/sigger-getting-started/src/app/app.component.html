@@ -1,0 +1,100 @@
+<style>
+  :host {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-size: 14px;
+    color: #333;
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .flex-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .flex-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .grow {
+    flex-grow: 1;
+  }
+
+  .messages {
+    width: 100%;
+    background-color: #fff;
+    border: 1px solid #e5e5ea;
+    border-radius: 0.25rem;
+    display: flex;
+    flex-direction: column;
+    font-size: 1.25rem;
+    margin: 0 auto 1rem;
+    max-width: 600px;
+    padding: 0.5rem 1.5rem;
+  }
+
+  .message p {
+    width: 400px;
+    border-radius: 1.15rem;
+    line-height: 1.25;
+    max-width: 75%;
+    padding: 0.5rem .875rem;
+    position: relative;
+    word-wrap: break-word;
+
+    align-self: flex-end;
+    background-color: #248bf5;
+    color: #fff;
+  }
+
+  .message p::before,
+  .message p::after {
+    bottom: -0.1rem;
+    content: "";
+    height: 1rem;
+    position: absolute;
+  }
+
+  .message p::before {
+    border-bottom-left-radius: 0.8rem 0.7rem;
+    border-right: 1rem solid #248bf5;
+    right: -0.35rem;
+    transform: translate(0, -0.1rem);
+  }
+
+  .message p::after {
+    background-color: #fff;
+    border-bottom-left-radius: 0.5rem;
+    right: -40px;
+    transform: translate(-30px, -2px);
+    width: 10px;
+  }
+
+  .user {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 100;
+    margin-bottom: 0.5rem;
+  }
+
+
+</style>
+
+<div class="flex-column">
+  <div class="message">
+    <p *ngFor="let m of messages$ | async">
+      {{ m.message }}
+      <span class="user"> {{ m.user}}</span>
+    </p>
+  </div>
+  <div class="flex-row">
+    <input (keydown.enter)="sendMessage(inpMessage.value); inpMessage.value = ''" class="grow" type="text" #inpMessage>
+    <button (click)="sendMessage(inpMessage.value); inpMessage.value = ''">send</button>
+  </div>
+</div>
