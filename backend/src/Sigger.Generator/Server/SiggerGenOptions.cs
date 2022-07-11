@@ -1,21 +1,21 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Sigger.Generator.Server;
 
 public class SiggerGenOptions
 {
-    private readonly WebApplication _builder;
-
-    internal SiggerGenOptions(WebApplication builder)
+    internal SiggerGenOptions()
     {
-        _builder = builder;
     }
 
     private string? _path;
 
     // private readonly HashSet<Assembly> _hubAssemblies = new();
-    private readonly HashSet<Type> _hubTypes = new();
+    private readonly Dictionary<Type, string> _hubTypes = new();
+
+    private List<Action<IEndpointRouteBuilder>> _hubRegistrationActions = new();
 
     public SchemaGeneratorOptions GenerationOptions { get; } = new();
 
@@ -36,7 +36,7 @@ public class SiggerGenOptions
     /// <summary>
     /// List of Hub-Types
     /// </summary>
-    public IReadOnlySet<Type> HubTypes => _hubTypes;
+    public IReadOnlyDictionary<Type, string> HubTypes => _hubTypes;
 
     /// <summary>
     /// The path to call the sigger definition
@@ -44,26 +44,6 @@ public class SiggerGenOptions
     public SiggerGenOptions WithPath(string path)
     {
         _path = path;
-        return this;
-    }
-
-    // /// <summary>
-    // /// The Assemblies where defined Hubs should be searched
-    // /// </summary>
-    // public SiggerGenOptions WithAssembly(params Assembly[] assemblies)
-    // {
-    //     foreach (var a in assemblies)
-    //         _hubAssemblies.Add(a);
-    //     return this;
-    // }
-
-    /// <summary>
-    /// The Assemblies where defined Hubs should be searched
-    /// </summary>
-    public SiggerGenOptions WithHubTypes(params Type[] hubTypes)
-    {
-        foreach (var a in hubTypes)
-            _hubTypes.Add(a);
         return this;
     }
 
@@ -83,8 +63,16 @@ public class SiggerGenOptions
     /// <returns></returns>
     public SiggerGenOptions WithHub<T>(string endpoint) where T : Hub
     {
-        if (_hubTypes.Add(typeof(T)))
-            _builder.MapHub<T>(endpoint);
+        _hubTypes.Add(typeof(T), endpoint);
+        _hubRegistrationActions.Add(p => p.MapHub<T>(endpoint));
         return this;
+    }
+
+    internal void MapHubs(IEndpointRouteBuilder builder)
+    {
+        foreach (var registration in _hubRegistrationActions)
+        {
+            registration.Invoke(builder);
+        }
     }
 }

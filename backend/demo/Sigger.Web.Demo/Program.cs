@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Sigger;
 using Sigger.Generator;
+using Sigger.Generator.Server;
 using Sigger.Web.Demo.Data;
 using Sigger.Web.Demo.Hubs;
 using Sigger.Web.Demo.Models;
@@ -13,7 +14,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddSigger();
+builder.Services.AddSigger(o => o
+    .WithHub<ChatHub>("/hubs/v1/chat")
+);
 builder.Services.AddSiggerRepository();
     
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -45,9 +48,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
-app.UseSigger(o => o
-    .WithHub<ChatHub>("/hubs/v1/chat")
-);
+app.UseSigger();
 
 // app.UseAuthentication();
 // app.UseIdentityServer();

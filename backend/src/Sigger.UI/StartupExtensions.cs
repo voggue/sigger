@@ -26,7 +26,8 @@ public static class StartupExtensions
         ".htm",
         ".png",
         ".ico",
-        ".jpg"
+        ".jpg",
+        ".js"
     };
 
     private static bool Precondition(HttpContext ctx, SiggerUiOptions options)
