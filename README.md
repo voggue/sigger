@@ -1,5 +1,9 @@
 # Sigger
 
+> Important note: sigger is currently still under development and cannot yet be used as a product. 
+> Since the interface declarations and interfaces are not yet sufficiently stable
+
+
 Sigger is essentially a code generator that generates client code from a SignalR hub. 
 A schema file is generated for the application, which then generates client code via an npm application.
 The name is derived from swagger (see https://github.com/domaindrivendev/Swashbuckle.AspNetCore) but for signalR.
