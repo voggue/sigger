@@ -1,7 +1,7 @@
 # Sigger-Client
 
 ## Abstract
-Generates SignalR client from Sigger-Definition file. See TODO: gitlab-link
+Generates SignalR client from Sigger-Definition file. See https://github.com/voggue/sigger
 
 ## Install
 ```
@@ -47,7 +47,7 @@ import { ChatHubModule } from 'src/hubs/ChatHub';
 @NgModule({
     imports: [
         ChatHubModule.forRoot({
-            siggerUrl: 'https://localhost:7291/hubs/v1/chat'
+            siggerUrl: 'https://localhost:7291/hubs/v1/chat' // Endpoint of SignalR Hub
         }),
     ]
 })
@@ -60,8 +60,16 @@ Create a new component e.g. HomeComponent
 
 `home.component.ts`
 ```
-```
+private readonly _messages$ = new BehaviorSubject<Message[]>([]);
+readonly messages$ = this._messages$.asObservable();
 
-`home.component.html`
-```
+constructor(private _chatHub: ChatHub) {
+    this._chatHub.onMessageReceived$.subscribe(msg => this.addMessage(msg));
+}
+
+private addMessage(args: { user: User | null, type: MessageType, message: string | null }) {
+    if (!args.message) return;
+    this._messages$.value.push(args)
+    this._messages$.next(this._messages$.value);
+}
 ```

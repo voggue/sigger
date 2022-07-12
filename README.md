@@ -126,7 +126,7 @@ Enter the following commands to create the Angular application.
 
 > Note: A global installation of angular/cli is required to execute the `ng` commands. 
 > When creating the application you will have to answer some questions, but for this tutorial you can confirm all of them with the default. 
-> If you are > not that experienced in creating angular projects I can recommend the `tour of heros` on the angular website.
+> If you are not that experienced in creating angular projects I can recommend the `tour of heros` on the angular website.
 > https://angular.io/tutorial/toh-pt0  
 
 ```
