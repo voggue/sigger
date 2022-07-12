@@ -6,8 +6,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSigger(o => o
     .WithHub<ChatHub>("/hubs/v1/chat")
 );
+builder.Services.AddCors(o =>
+    o.AddDefaultPolicy(c => c
+        .AllowAnyOrigin()
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+    ));
 
 var app = builder.Build();
+app.UseCors();
 
 app.UseSiggerUi(o =>
     o.WithIgnoreCaching());
