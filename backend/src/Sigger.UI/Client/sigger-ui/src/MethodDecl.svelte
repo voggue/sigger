@@ -13,11 +13,15 @@
 <div class="heading">
     <h3>
         <span class="type">
-            <a on:click={toggleExpanded} href="#!/{hub.exportedName}/{method.exportedName}">method</a
+            <a
+                on:click={toggleExpanded}
+                href="#!/{hub.exportedName}/{method.exportedName}">method</a
             >
         </span>
         <span class="path">
-            <a on:click={toggleExpanded} href="#!/{hub.exportedName}/{method.exportedName}"
+            <a
+                on:click={toggleExpanded}
+                href="#!/{hub.exportedName}/{method.exportedName}"
                 >{method?.caption}</a
             >
         </span>
@@ -38,8 +42,20 @@
 
             <div class="signature">
                 <ul class="nav">
-                    <li><a class:active="{method.showDescription}" href="#!/{hub.exportedName}/{method.exportedName}">Model</a></li>
-                    <li><a class:active="{!method.showDescription}" href="#!/{hub.exportedName}/{method.exportedName}">Example Value</a></li>
+                    <li>
+                        <a
+                            class:active={method.showDescription}
+                            href="#!/{hub.exportedName}/{method.exportedName}"
+                            >Model</a
+                        >
+                    </li>
+                    <li>
+                        <a
+                            class:active={!method.showDescription}
+                            href="#!/{hub.exportedName}/{method.exportedName}"
+                            >Example Value</a
+                        >
+                    </li>
                 </ul>
                 <div class="signature-container">
                     {#if method.showDescription}
@@ -49,7 +65,8 @@
                     {:else}
                         <div class="snippet" style="display: block;">
                             <div class="json" style="display: block;">
-                                <pre><code>x: true,
+                                <pre><code
+                                        >x: true,
                                     y: false,
                                 </code>
                                 </pre>
@@ -153,6 +170,7 @@
 
     .content {
         padding: 0rem 1rem;
+        margin-bottom: 1rem;
     }
 
     .respone h4 {
@@ -199,7 +217,7 @@
         color: black;
     }
 
-    .signature .signature-container{
+    .signature .signature-container {
         padding: 0;
         margin: 0;
     }

@@ -110,4 +110,8 @@
         padding: 0;
         margin: 0;
     }
+
+    ul.endpoints li{
+        margin-bottom: 0.5rem;
+    }
 </style>
