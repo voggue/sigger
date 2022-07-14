@@ -58,7 +58,7 @@
       "generateClientClasses": false,
       "generateClientInterfaces": false,
       "generateOptionalParameters": false,
-      "exportTypes": false,
+      "exportTypes": true,
       "wrapDtoExceptions": false,
       "exceptionClass": "ApiException",
       "clientBaseClass": null,
