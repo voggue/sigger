@@ -1,0 +1,1 @@
+copy .\schema.ts ..\..\backend\src\Sigger.UI\Client\sigger-ui\src\schema.ts
