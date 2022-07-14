@@ -1,4 +1,4 @@
-# Generate typescript sigger schema specification files
+# Generate typescript sigger specification files
 
 Used for sigger.ui client
 
@@ -10,10 +10,10 @@ npm install nswag -g
 
 ## Generate swagger definition and typescript files
 `
-generate-schema.cmd
+generate-ts-spec.cmd
 `
 
 ## Copy to required libraries in sigger project
 `
-copy-schema.cmd
+copy-ts-spec.cmd
 `
