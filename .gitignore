@@ -237,3 +237,5 @@ _Pvt_Extensions
 # FAKE - F# Make
 .fake/
 /client/test/
+/client/schema-ts/*.ts
+/client/schema-ts/swagger.json
