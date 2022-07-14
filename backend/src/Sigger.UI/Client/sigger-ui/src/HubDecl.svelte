@@ -6,11 +6,15 @@
     export let hub: any;
 
     function toggleView() {
-        hub.visible = !hub.visible;
+        hub.hidden = !hub.hidden;
     }
 
     function toggleExpanded() {
         hub.expanded = !hub.expanded;
+        if(hub.expanded){
+            hub.hidden = false;
+        }
+        
         if (hub.methods) {
             for (let method of hub.methods) {
                 method.expanded = hub.expanded;
@@ -29,8 +33,7 @@
 
     <ul class="options">
         <li>
-            <button on:click={toggleView}
-                >{hub.visible ? "Hide" : "Show"}</button
+            <button on:click={toggleView}>{hub.hidden ? "Show" : "Hide"}</button
             >
         </li>
         <li>
@@ -41,23 +44,27 @@
     </ul>
 </div>
 
-<ul class="endpoints">
-    {#if hub?.methods?.length}
-        {#each hub?.methods as method}
-            <li class="endpoint">
-                <MethodDecl {hub} {method} />
-            </li>
-        {/each}
-    {/if}
+{#if !hub?.hidden}
+    <ul class="endpoints">
+        {#if hub?.methods?.length}
+            {#each hub?.methods as method}
+                <li class="endpoint">
+                    <MethodDecl {hub} {method} />
+                </li>
+            {/each}
+        {/if}
 
-    {#if hub?.events?.length}
-        {#each hub?.events as ev}
-            <li class="endpoint">
-                <EventDecl {hub} eventDecl={ev} />
-            </li>
-        {/each}
-    {/if}
-</ul>
+        {#if hub?.events?.length}
+            {#each hub?.events as ev}
+                <li class="endpoint">
+                    <EventDecl {hub} eventDecl={ev} />
+                </li>
+            {/each}
+        {/if}
+    </ul>
+{:else}
+    <hr />
+{/if}
 
 <style>
     .heading {
