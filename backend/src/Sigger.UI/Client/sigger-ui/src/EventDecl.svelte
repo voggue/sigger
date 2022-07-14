@@ -32,7 +32,7 @@
     <ul class="options">
         <li>
             <button on:click={toggleExpanded}
-                >{eventDecl.expanded ? "Collapse" : "Expand"} Operations</button
+                >{eventDecl.expanded ? "Collapse" : "Expand"} event</button
             >
         </li>
     </ul>
