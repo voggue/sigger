@@ -15,7 +15,6 @@ builder.Services.AddCors(o =>
 
 var app = builder.Build();
 app.UseCors();
-
 app.UseSiggerUi(o =>
     o.WithIgnoreCaching());
 app.UseSigger();

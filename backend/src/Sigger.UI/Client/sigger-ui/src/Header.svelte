@@ -1,11 +1,10 @@
 <script lang="ts">
-    import { createEventDispatcher } from "svelte";
+    import { createEventDispatcher, onMount } from "svelte";
 
     const dispatch = createEventDispatcher();
 
     export let url: string;
 
-    let changedUrl = "";
     function isInvalidUrl(item) {
         try {
             new URL(item);
@@ -16,9 +15,7 @@
     }
 
     function connect(event: Event) {
-        dispatch("connect", {
-            url: changedUrl,
-        });
+        dispatch("connect", { url });
     }
 </script>
 
@@ -38,7 +35,7 @@
             <div class="input">
                 <input
                     placeholder={url}
-                    bind:value={changedUrl}
+                    bind:value={url}
                     id="input_baseUrl"
                     name="baseUrl"
                     type="text"
@@ -47,7 +44,7 @@
             <div id="auth_container" />
             <div class="input">
                 <button
-                    disabled={isInvalidUrl(changedUrl)}
+                    disabled={isInvalidUrl(url)}
                     class="header_btn"
                     on:click={connect}
                     data-sw-translate>Connect</button
@@ -110,7 +107,6 @@
         margin: 0;
         width: 400px;
     }
-
 
     #auth_container {
         color: #fff;

@@ -2,6 +2,7 @@
 	import Header from "./Header.svelte";
 	import Title from "./Title.svelte";
 	import { onMount } from "svelte";
+	import HubDecl from "./HubDecl.svelte";
 
 	export let url = "";
 	export let directory = "";
@@ -22,6 +23,7 @@
 			definition = await resp.json();
 		} catch (e) {
 			error = e;
+			console.error(e);
 			return null;
 		}
 	}
@@ -36,7 +38,18 @@
 
 	<div class="ui-container">
 		<Title {url} info={definition?.info} {error} />
+
+		<ul class="ressources">
+			{#if definition?.hubs?.length}
+				{#each definition.hubs as hub}
+					<li class="resource">
+						<HubDecl {url} {hub} />
+					</li>
+				{/each}
+			{/if}
+		</ul>
 	</div>
+
 	<h1>Hello {directory}!</h1>
 	<p>
 		Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn
@@ -58,5 +71,11 @@
 		max-width: 960px;
 		margin-left: auto;
 		margin-right: auto;
+	}
+
+	.ressources {
+		list-style: none;
+		padding: 0;
+		margin: 0;
 	}
 </style>
