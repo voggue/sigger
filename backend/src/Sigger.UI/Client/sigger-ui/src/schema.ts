@@ -10,7 +10,7 @@
 
 
 
-interface ClassDefinition {
+export interface ClassDefinition {
     clrType?: string | undefined;
     caption?: string | undefined;
     description?: string | undefined;
@@ -19,7 +19,7 @@ interface ClassDefinition {
     exportedName?: string | undefined;
 }
 
-interface PropertyDefinition {
+export interface PropertyDefinition {
     propertyType: TypeDefinition;
     exportedName: string;
     caption: string;
@@ -28,7 +28,7 @@ interface PropertyDefinition {
     order?: number | undefined;
 }
 
-interface TypeDefinition {
+export interface TypeDefinition {
     exportedType?: string | undefined;
     flagsCaption?: string | undefined;
     flagsValue: number;
@@ -40,7 +40,7 @@ interface TypeDefinition {
     genericTypes?: TypeDefinition[] | undefined;
 }
 
-interface EnumDefinition {
+export interface EnumDefinition {
     clrType?: string | undefined;
     caption?: string | undefined;
     exportedName?: string | undefined;
@@ -49,7 +49,7 @@ interface EnumDefinition {
     items?: EnumItemDefinition[] | undefined;
 }
 
-interface EnumItemDefinition {
+export interface EnumItemDefinition {
     clrName?: string | undefined;
     caption?: string | undefined;
     description?: string | undefined;
@@ -60,7 +60,7 @@ interface EnumItemDefinition {
     exportedValue?: string | undefined;
 }
 
-interface MethodDefinition {
+export interface MethodDefinition {
     name?: string | undefined;
     exportedName?: string | undefined;
     caption?: string | undefined;
@@ -70,24 +70,24 @@ interface MethodDefinition {
     returnType?: TypeDefinition | undefined;
 }
 
-interface EventDefinition extends MethodDefinition {
+export interface EventDefinition extends MethodDefinition {
     keepValueMode: KeepValueMode;
 }
 
-enum KeepValueMode {
+export enum KeepValueMode {
     FireAndForget = "FireAndForget",
     KeepLastValue = "KeepLastValue",
     KeepWithSeedValue = "KeepWithSeedValue",
 }
 
-interface MethodArgumentDefinition extends TypeDefinition {
+export interface MethodArgumentDefinition extends TypeDefinition {
     exportedName: string;
     clrName: string;
     order: number;
     type: TypeDefinition;
 }
 
-interface HubDefinition {
+export interface HubDefinition {
     clrType?: string | undefined;
     caption?: string | undefined;
     description?: string | undefined;
@@ -99,19 +99,19 @@ interface HubDefinition {
     definitions?: TypeDefinitions | undefined;
 }
 
-interface TypeDefinitions {
+export interface TypeDefinitions {
     classDefinitions?: ClassDefinition[] | undefined;
     enumDefinitions?: EnumDefinition[] | undefined;
 }
 
-interface SchemaInfo {
+export interface SchemaInfo {
     title: string;
     description?: string | undefined;
     termsOfService?: string | undefined;
     version: string;
 }
 
-interface SchemaDocument {
+export interface SchemaDocument {
     schemaVersion: string;
     info: SchemaInfo;
     hubs: HubDefinition[];

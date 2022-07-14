@@ -8,7 +8,9 @@ export function hasFlag(flags, testFlag) {
 /**
  * Test if the Flag is set
  */
-export function hasAnyFlag(flags, testFlags) {
+export function hasAnyFlag(flags, ...testFlags) {
+  if (flags.flagsValue !== undefined) return hasAnyFlag(flags.flagsValue, testFlags);
+
   const args = Array.prototype.slice.call(arguments, 1);
   for (let argIdx = 0; argIdx < args.length; argIdx++) {
     const arg = args[argIdx];
@@ -18,14 +20,37 @@ export function hasAnyFlag(flags, testFlags) {
 }
 
 /** Returns true if the type model must be imported */
+export function isPrimitive(flags) {
+  return hasAnyFlag(flags, TypeFlags.IsPrimitive);
+}
+
+/** Returns true if the type is Nullable*/
+export function isNullable(flags) {
+  return hasAnyFlag(flags, TypeFlags.IsNullable);
+}
+
+/** Returns true if the type model must be imported */
 export function isComplexOrEnum(flags) {
-  if (flags.flagsValue !== undefined) return isComplexOrEnum(flags.flagsValue);
   return hasAnyFlag(flags, TypeFlags.IsComplex, TypeFlags.IsEnum);
+}
+
+/** Returns true if the type is a complex type*/
+export function isComplex(flags) {
+  return hasAnyFlag(flags, TypeFlags.IsComplex);
+}
+
+/** Returns true if the type is a void type*/
+export function isVoid(flags) {
+  return hasAnyFlag(flags, TypeFlags.IsVoid);
+}
+
+/** Returns true if the type is a text type*/
+export function isText(flags) {
+  return hasAnyFlag(flags, TypeFlags.IsString);
 }
 
 /** returns true if the type is an */
 export function isArray(flags) {
-  if (flags.flagsValue !== undefined) return isArray(flags.flagsValue);
   return hasAnyFlag(flags, TypeFlags.IsArray);
 }
 

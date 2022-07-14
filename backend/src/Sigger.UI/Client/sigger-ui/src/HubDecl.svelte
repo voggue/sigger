@@ -1,4 +1,5 @@
 <script lang="ts">
+    import EventDecl from "./EventDecl.svelte";
     import MethodDecl from "./MethodDecl.svelte";
 
     export let url: string;
@@ -29,11 +30,13 @@
     <ul class="options">
         <li>
             <button on:click={toggleView}
-                >{hub.visible ? "Hide" : "Show"}</button>
+                >{hub.visible ? "Hide" : "Show"}</button
+            >
         </li>
         <li>
             <button on:click={toggleExpanded}
-                >{hub.expanded ? "Collapse" : "Expand"} Operations</button>
+                >{hub.expanded ? "Collapse" : "Expand"} Operations</button
+            >
         </li>
     </ul>
 </div>
@@ -42,7 +45,15 @@
     {#if hub?.methods?.length}
         {#each hub?.methods as method}
             <li class="endpoint">
-                <MethodDecl {url} {hub} {method} />
+                <MethodDecl {hub} {method} />
+            </li>
+        {/each}
+    {/if}
+
+    {#if hub?.events?.length}
+        {#each hub?.events as ev}
+            <li class="endpoint">
+                <EventDecl {hub} eventDecl={ev} />
             </li>
         {/each}
     {/if}
@@ -111,7 +122,7 @@
         margin: 0;
     }
 
-    ul.endpoints li{
+    ul.endpoints li {
         margin-bottom: 0.5rem;
     }
 </style>

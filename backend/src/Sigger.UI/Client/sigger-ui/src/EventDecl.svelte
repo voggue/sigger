@@ -1,16 +1,15 @@
 <script lang="ts">
     import { fade } from "svelte/transition";
     import ParametersDecl from "./ParametersDecl.svelte";
-    import SampleValue from "./TypeDecl.svelte";
 
     export let hub: any;
-    export let method: any;
+    export let eventDecl: any;
 
     function toggleExpanded() {
-        method.expanded = !method.expanded;
+        eventDecl.expanded = !eventDecl.expanded;
     }
 
-    function invokeMethod() {}
+    function subscribeMethod() {}
 </script>
 
 <div class="heading">
@@ -18,14 +17,14 @@
         <span class="type">
             <a
                 on:click={toggleExpanded}
-                href="#!/{hub.exportedName}/{method.exportedName}">method</a
+                href="#!/{hub.exportedName}/{eventDecl.exportedName}">event</a
             >
         </span>
         <span class="path">
             <a
                 on:click={toggleExpanded}
-                href="#!/{hub.exportedName}/{method.exportedName}"
-                >{method?.caption}</a
+                href="#!/{hub.exportedName}/{eventDecl.exportedName}"
+                >{eventDecl?.caption}</a
             >
         </span>
     </h3>
@@ -33,63 +32,24 @@
     <ul class="options">
         <li>
             <button on:click={toggleExpanded}
-                >{method.expanded ? "Collapse" : "Expand"} Operations</button
+                >{eventDecl.expanded ? "Collapse" : "Expand"} Operations</button
             >
         </li>
     </ul>
 </div>
-{#if method.expanded}
+{#if eventDecl.expanded}
     <div transition:fade class="content">
-        <div class="section">
-            <h4>Response</h4>
-
-            <div class="signature">
-                <ul class="nav">
-                    <li>
-                        <a
-                            class:active={!method.showDescription}
-                            href="#!/{hub.exportedName}/{method.exportedName}"
-                            >Model</a
-                        >
-                    </li>
-                    <!-- <li>
-                        <a
-                            class:active={!method.showDescription}
-                            href="#!/{hub.exportedName}/{method.exportedName}"
-                            >Example Value</a
-                        >
-                    </li> -->
-                </ul>
-                <div class="signature-container">
-                    {#if method.showDescription}
-                        <div class="description">
-                            <!-- todo: style="display: none" -->
-                        </div>
-                    {:else}
-                        <div class="snippet" style="display: block;">
-                            <div class="json" style="display: block;">
-                                <SampleValue type={method.returnType} />
-                            </div>
-                            <!-- snippet_json -->
-                            <div><!-- snippet --></div>
-                            <!-- signature-container -->
-                        </div>
-                    {/if}
-                </div>
-            </div>
-        </div>
-
-        {#if method.arguments?.length}
+        {#if eventDecl.arguments?.length}
             <div class="section">
-                <h4>Parameters</h4>
+                <h4>Response</h4>
 
                 <div class="parameters">
-                    <ParametersDecl paramters={method.arguments} />
+                    <ParametersDecl paramters={eventDecl.arguments} />
                 </div>
             </div>
         {/if}
 
-        <button class="btt-invoke" on:click={invokeMethod}>Try it out!</button>
+        <button class="btt-invoke" on:click={subscribeMethod}>Subscribe</button>
     </div>
 {/if}
 
@@ -126,7 +86,7 @@
     }
 
     .heading .type a {
-        background-color: rgb(4, 147, 114);
+        background-color: rgb(245, 124, 0);
         text-transform: uppercase;
         color: white;
         display: inline-block;
