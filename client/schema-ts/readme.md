@@ -1,4 +1,6 @@
-# Generate typescript schema files
+# Generate typescript sigger schema specification files
+
+Used for sigger.ui client
 
 ## Requirements
 `
