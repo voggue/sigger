@@ -1,201 +1,237 @@
 <script lang="ts">
-    import { fade } from "svelte/transition";
-    import ParametersDecl from "./ParametersDecl.svelte";
+  import { fade } from "svelte/transition";
+  import ParametersDecl from "./ParametersDecl.svelte";
 
-    export let hub: any;
-    export let eventDecl: any;
+  export let hub: any;
+  export let eventDecl: any;
 
-    function toggleExpanded() {
-        eventDecl.expanded = !eventDecl.expanded;
-    }
+  let selectedMessage: any;
+  let messages: any[];
 
-    function subscribeMethod() {}
+  function toggleExpanded() {
+    eventDecl.expanded = !eventDecl.expanded;
+  }
+
+  function subscribeMethod() {
+    eventDecl.subscribed = !eventDecl.subscribed;
+  }
 </script>
 
 <div class="heading">
-    <h3>
-        <span class="type">
-            <a
-                on:click={toggleExpanded}
-                href="#!/{hub.exportedName}/{eventDecl.exportedName}">event</a
-            >
-        </span>
-        <span class="path">
-            <a
-                on:click={toggleExpanded}
-                href="#!/{hub.exportedName}/{eventDecl.exportedName}"
-                >{eventDecl?.caption}</a
-            >
-        </span>
-    </h3>
+  <h3>
+    <span class="type">
+      <a
+        on:click={toggleExpanded}
+        href="#!/{hub.exportedName}/{eventDecl.exportedName}">event</a
+      >
+    </span>
+    <span class="path">
+      <a
+        on:click={toggleExpanded}
+        href="#!/{hub.exportedName}/{eventDecl.exportedName}"
+        >{eventDecl?.caption}</a
+      >
+    </span>
+  </h3>
 
-    <ul class="options">
-        <li>
-            <button on:click={toggleExpanded}
-                >{eventDecl.expanded ? "Collapse" : "Expand"} event</button
-            >
-        </li>
-    </ul>
+  <ul class="options">
+    <li>
+      <button on:click={toggleExpanded}
+        >{eventDecl.expanded ? "Collapse" : "Expand"} event</button
+      >
+    </li>
+  </ul>
 </div>
 {#if eventDecl.expanded}
-    <div transition:fade class="content">
-        {#if eventDecl.arguments?.length}
-            <div class="section">
-                <h4>Response</h4>
+  <div transition:fade class="content">
+    {#if eventDecl.arguments?.length}
+      <div class="section">
+        <h4>Response</h4>
 
-                <div class="parameters">
-                    <ParametersDecl paramters={eventDecl.arguments} />
-                </div>
-            </div>
-        {/if}
+        <div class="parameters">
+          <ParametersDecl paramters={eventDecl.arguments} />
+        </div>
+      </div>
+    {/if}
 
-        <button class="btt-invoke" on:click={subscribeMethod}>Subscribe</button>
+    <button class="btt-invoke" on:click={subscribeMethod}
+      >{eventDecl.subscribed ? "Unsubscribe" : "Subscribe"}</button
+    >
+  </div>
+
+  {#if eventDecl.subscribed}
+    <div transition:fade class="subscription">
+      <div class="section">
+        <h4>Subscription</h4>
+        <div class="subscription-container">
+          <div class="subscription-messages">
+            {#if messages?.length}
+              {#each messages as message}
+                <button>
+                  {message.timestamp}
+                </button>
+              {/each}
+            {:else}
+              <div class="no-messages">no messages received yet!</div>
+            {/if}
+          </div>
+          <div class="subscription-content">
+            <pre>{#if selectedMessage}<code>{selectedMessage}</code>{/if}</pre>
+          </div>
+        </div>
+      </div>
     </div>
+  {/if}
 {/if}
 
 <style>
-    .heading,
-    .content {
-        background-color: rgb(236, 240, 241);
-        border: 1px solid rgb(218, 223, 225);
-    }
+  .subscription-container {
+    display: flex;
+  }
 
-    .heading {
-        float: none;
-        clear: both;
-        display: block;
-        overflow: hidden;
-        margin: 0px;
-        padding: 0px;
-    }
+  .subscription-messages {
+    min-height: 100px;
+    width: 33%;
+    border-right: 1px solid rgb(245, 124, 0);
+    background-color: rgb(255, 255, 255);
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(255, 255, 255);
+  }
 
-    .heading a {
-        font-weight: 100;
-    }
+  .subscription-content {
+    min-height: 100px;
+    flex-grow: 1;
+  }
 
-    .heading h3 {
-        display: block;
-        clear: none;
-        float: left;
-        width: auto;
-        line-height: 1.1em;
-        color: black;
-        margin: 0px;
-        padding: 0px;
-        font-size: 0.9rem;
-    }
+  pre {
+    font-size: 0.85em;
+    line-height: 1.2em;
+    cursor: pointer;
+    overflow: auto;
+    background-color: rgb(255, 255, 255);
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(255, 255, 255);
+    border-image: initial;
+    padding: 0 0.25rem;
+    height: 100%;
+    margin: 0;
+  }
 
-    .heading .type a {
-        background-color: rgb(245, 124, 0);
-        text-transform: uppercase;
-        color: white;
-        display: inline-block;
-        min-width: 50px;
-        text-align: center;
-        text-decoration: none;
-        padding: 7px 6px 4px 2px;
-        border-radius: 2px;
-        font-size: 0.75rem;
-    }
+  .no-messages {
+    align-items: center;
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    height: 100%;
+    color: rgb(245, 124, 0);
+  }
 
-    .heading .path a {
-        color: black;
-        text-decoration: none;
-        padding: 0 0 0 0.5rem;
-    }
+  .heading,
+  .content,
+  .subscription {
+    background-color: rgba(252, 161, 48, 0.1);
+    border: 1px solid rgba(252, 161, 48, 0.1);
+  }
 
-    .heading ul.options {
-        list-style: none;
-        display: block;
-        clear: none;
-        float: right;
-        overflow: hidden;
-        padding: 0px;
-        margin: 4px 10px 0px 0px;
-        font-size: 0.9rem;
-    }
+  .heading {
+    margin-top: 1rem;
+    float: none;
+    clear: both;
+    display: block;
+    overflow: hidden;
+    margin: 0px;
+    padding: 0px;
+  }
 
-    .heading ul.options li {
-        display: block;
-        clear: none;
-        float: left;
-        padding: 0px;
-        margin: 0px;
-        color: rgb(102, 102, 102);
-    }
+  .heading a {
+    font-weight: 100;
+  }
 
-    .heading ul.options li:not(:last-child) {
-        border-right: 1px solid rgb(221, 221, 221);
-    }
+  .heading h3 {
+    display: block;
+    clear: none;
+    float: left;
+    width: auto;
+    line-height: 1.1em;
+    color: black;
+    margin: 0px;
+    padding: 0px;
+    font-size: 0.9rem;
+  }
 
-    .options button {
-        text-decoration: none;
-        color: rgb(85, 85, 85);
-        background: none;
-        border: none;
-    }
+  .heading .type a {
+    background-color: rgb(245, 124, 0);
+    text-transform: uppercase;
+    color: white;
+    display: inline-block;
+    min-width: 50px;
+    text-align: center;
+    text-decoration: none;
+    padding: 7px 6px 4px 2px;
+    border-radius: 2px;
+    font-size: 0.75rem;
+  }
 
-    .options button:hover {
-        text-decoration: underline;
-    }
+  .heading .path a {
+    color: black;
+    text-decoration: none;
+    padding: 0 0 0 0.5rem;
+  }
 
-    .content {
-        padding: 0rem 1rem;
-        margin-bottom: 1rem;
-    }
+  .heading ul.options {
+    list-style: none;
+    display: block;
+    clear: none;
+    float: right;
+    overflow: hidden;
+    padding: 0px;
+    margin: 4px 10px 0px 0px;
+    font-size: 0.9rem;
+  }
 
-    .section h4 {
-        display: block;
-        margin-block-start: 1.33em;
-        margin-block-end: 1.33em;
-        margin-inline-start: 0px;
-        margin-inline-end: 0px;
-        font-weight: 100;
-        color: rgb(4, 147, 114);
-    }
+  .heading ul.options li {
+    display: block;
+    clear: none;
+    float: left;
+    padding: 0px;
+    margin: 0px;
+    color: rgb(102, 102, 102);
+  }
 
-    .section .signature {
-        font-size: 1em;
-    }
+  .heading ul.options li:not(:last-child) {
+    border-right: 1px solid rgb(221, 221, 221);
+  }
 
-    .signature .nav {
-        display: inline-block;
-        list-style: none;
-        min-width: 230px;
-        line-height: 1em;
-        margin: 0px;
-        padding: 0px;
-    }
+  .options button {
+    text-decoration: none;
+    color: rgb(85, 85, 85);
+    background: none;
+    border: none;
+  }
 
-    .signature .nav li {
-        float: left;
-        margin: 0px 5px 0px 0px;
-        padding: 2px 5px 0px 0px;
-    }
+  .options button:hover {
+    text-decoration: underline;
+  }
 
-    .signature .nav li:not(:last-child) {
-        border-right: 1px solid rgb(221, 221, 221);
-    }
+  .content {
+    padding: 0rem 1rem;
+  }
 
-    .nav li a {
-        color: rgb(170, 170, 170);
-        text-decoration: none;
-        font-size: 0.9rem;
-        font-weight: 100;
-    }
+  .section h4 {
+    display: block;
+    margin-block-start: 1.33em;
+    margin-block-end: 1.33em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    font-weight: 100;
+    color: rgb(245, 124, 0);
+  }
 
-    .nav li a.active {
-        color: black;
-    }
-
-    .signature .signature-container {
-        padding: 0;
-        margin: 0;
-    }
-
-    .btt-invoke {
-        padding: 5px;
-        margin-top: 1rem;
-        margin-bottom: 0.5rem;
-    }
+  .btt-invoke {
+    padding: 5px;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+  }
 </style>
