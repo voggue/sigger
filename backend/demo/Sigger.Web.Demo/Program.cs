@@ -18,7 +18,7 @@ builder.Services.AddSigger(o => o
     .WithHub<ChatHub>("/hubs/v1/chat")
 );
 builder.Services.AddSiggerRepository();
-    
+
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
@@ -63,11 +63,10 @@ app.UseSigger();
 // app.UseIdentityServer();
 // app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller}/{action=Index}/{id?}");
-app.MapRazorPages();
-
-app.MapFallbackToFile("index.html");
+// app.MapControllerRoute(
+//     name: "default",
+//     pattern: "{controller}/{action=Index}/{id?}");
+// app.MapRazorPages();
+// app.MapFallbackToFile("index.html");
 
 app.Run();

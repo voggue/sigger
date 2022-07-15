@@ -31,7 +31,6 @@
     "popper.js": "^1.16.0",
     "run-script-os": "^1.1.6",
     "rxjs": "~6.6.0",
-    "sigger-client-ng": "^1.0.0",
     "tslib": "^2.1.0",
     "zone.js": "~0.11.4"
   },
@@ -43,6 +42,7 @@
     "@types/jasminewd2": "~2.0.8",
     "@types/node": "^12.11.1",
     "jasmine-core": "~3.8.0",
+    "sigger-gen": "^1.0.2",
     "karma": "~6.3.0",
     "karma-chrome-launcher": "~3.1.0",
     "karma-coverage": "~2.0.3",

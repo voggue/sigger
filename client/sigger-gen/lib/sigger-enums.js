@@ -35,6 +35,16 @@ export function isComplexOrEnum(flags) {
 }
 
 /** Returns true if the type is a complex type*/
+export function isNumber(flags) {
+  return hasAnyFlag(flags, TypeFlags.IsNumber);
+}
+
+/** Returns true if the type is a complex type*/
+export function isBoolean(flags) {
+  return hasAnyFlag(flags, TypeFlags.IsBoolean);
+}
+
+/** Returns true if the type is a complex type*/
 export function isComplex(flags) {
   return hasAnyFlag(flags, TypeFlags.IsComplex);
 }
