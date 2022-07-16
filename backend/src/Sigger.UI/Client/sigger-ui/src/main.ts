@@ -4,7 +4,7 @@ const app = new App({
 	target: document.body,
 	props: {
 		directory: './sigger/',
-		url: 'https://localhost:7291/sigger/sigger.json',
+		host: 'https://localhost:7291/sigger/sigger.json',
 	}
 });
 

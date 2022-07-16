@@ -2,7 +2,6 @@
     import EventDecl from "./EventDecl.svelte";
     import MethodDecl from "./MethodDecl.svelte";
 
-    export let url: string;
     export let hub: any;
 
     function toggleView() {
@@ -14,7 +13,7 @@
         if(hub.expanded){
             hub.hidden = false;
         }
-        
+
         if (hub.methods) {
             for (let method of hub.methods) {
                 method.expanded = hub.expanded;
