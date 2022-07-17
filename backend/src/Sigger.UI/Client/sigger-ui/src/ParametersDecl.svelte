@@ -6,6 +6,7 @@
     isText,
   } from "../../../../../../client/sigger-gen/lib/sigger-enums";
 
+  export let hideValue: boolean;
   export let paramters: any;
 </script>
 
@@ -16,7 +17,9 @@
         <th style="width: 100px; max-width: 100px">Name</th>
         <th style="width: 200px; max-width: 200px">Type</th>
         <th style="width: 200px; max-width: 200px">Description</th>
-        <th>Value</th>
+        {#if !hideValue}
+          <th>Value</th>
+        {/if}
       </tr>
     </thead>
     <tbody>
@@ -25,33 +28,35 @@
           <td>{argument.exportedName}</td>
           <td>{argument.type.exportedType}</td>
           <td>{argument.type.caption}</td>
-          <td>
-            {#if isBoolean(argument.type)}
-              <input
-                style="width: 100%"
-                type="checkbox"
-                bind:checked={argument.value}
-              />
-            {:else if isNumber(argument.type)}
-              <input
-                bind:value={argument.value}
-                style="width: 100%"
-                type="number"
-              />
-            {:else if isComplex(argument.type)}
-              <div
-                style="width: 100%"
-                contenteditable="true"
-                bind:innerHTML={argument.value}
-              />
-            {:else if isText(argument.type)}
-              <input
-                bind:value={argument.value}
-                style="width: 100%"
-                type="text"
-              />
-            {/if}
-          </td>
+          {#if !hideValue}
+            <td>
+              {#if isBoolean(argument.type)}
+                <input
+                  style="width: 100%"
+                  type="checkbox"
+                  bind:checked={argument.value}
+                />
+              {:else if isNumber(argument.type)}
+                <input
+                  bind:value={argument.value}
+                  style="width: 100%"
+                  type="number"
+                />
+              {:else if isComplex(argument.type)}
+                <div
+                  style="width: 100%"
+                  contenteditable="true"
+                  bind:innerHTML={argument.value}
+                />
+              {:else if isText(argument.type)}
+                <input
+                  bind:value={argument.value}
+                  style="width: 100%"
+                  type="text"
+                />
+              {/if}
+            </td>
+          {/if}
         </tr>
       {/each}
     </tbody>

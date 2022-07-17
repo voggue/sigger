@@ -93,7 +93,7 @@
         <h4>Response</h4>
 
         <div class="parameters">
-          <ParametersDecl paramters={eventDecl.arguments} />
+          <ParametersDecl paramters={eventDecl.arguments} hideValue={true} />
         </div>
       </div>
     {/if}
@@ -111,7 +111,10 @@
           <div class="subscription-messages">
             {#if messages?.length}
               {#each messages as message}
-                <button on:click="{e => selectedMessage = message}">
+                <button
+                  class:active={(selectedMessage ?? lastMessage) == message}
+                  on:click={(e) => (selectedMessage = message)}
+                >
                   {formatDate(message.date)}
                 </button>
               {/each}
@@ -291,5 +294,10 @@
     background: none;
     border-bottom: 1px solid rgb(221, 221, 221);
     padding: 5px 15px;
+  }
+
+  .subscription-messages button.active {
+    border-bottom: 1px solid rgb(117, 117, 117);
+    font-weight: bold;
   }
 </style>
