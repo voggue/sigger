@@ -46,14 +46,42 @@ export async function fetchSchema(host: string) {
   }
 }
 
-export async function connect(hub: HubWithMetadata) {
-  console.log("connect to " + hub.caption ?? hub.name);
-  const c = new signalR.HubConnectionBuilder()
-    .withUrl("/hub")
-    .build();
+export async function getConnection(hub: HubWithMetadata) {
+  if (hub.connection) {
+    return hub.connection;
+  }
 
-  hub.connection = c;
-  console.log("hub connected ", c.connectionId)
+  try {
+    console.log("connect to " + hub.caption ?? hub.name);
+    const c = new signalR.HubConnectionBuilder()
+      .withUrl("https://localhost:7291/hubs/v1/chat", {
+        skipNegotiation: true,
+        transport: signalR.HttpTransportType.WebSockets,
+        withCredentials: false
+      })
+      .configureLogging(signalR.LogLevel.Trace)
+      .withAutomaticReconnect()
+      .build();
+
+    c.onclose(async () => {
+      console.log("hub closed", c.connectionId)
+    });
+
+    c.onreconnected(async () => {
+      console.log("hub reconnected", c.connectionId)
+    })
+
+    await c.start();
+
+    hub.connection = c;
+    console.log("hub connected ", c.connectionId)
+    return hub.connection;
+
+  } catch (e) {
+    error.update(() => e);
+    console.error(e);
+    return null;
+  }
 }
 
 function isValidUrl(host: string) {

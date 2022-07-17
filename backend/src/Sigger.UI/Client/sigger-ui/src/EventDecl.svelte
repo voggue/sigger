@@ -1,19 +1,63 @@
 <script lang="ts">
   import { fade } from "svelte/transition";
   import ParametersDecl from "./ParametersDecl.svelte";
+  import { HubWithMetadata, getConnection } from "./store";
 
-  export let hub: any;
+  export let hub: HubWithMetadata;
   export let eventDecl: any;
 
+  const MAX_MESSAGES = 15;
+
   let selectedMessage: any;
-  let messages: any[];
+  let lastMessage: { date: Date; data: any };
+  let messages: { date: Date; data: any }[] = [];
 
   function toggleExpanded() {
     eventDecl.expanded = !eventDecl.expanded;
   }
 
-  function subscribeMethod() {
+  function convertResponse(args) {
+    var fmt = {};
+    for (let argIdx = 0; argIdx < eventDecl.arguments.length; argIdx++) {
+      const argDef = eventDecl.arguments[argIdx];
+
+      if (args.length > argIdx) {
+        fmt[argDef.exportedName] = args[argIdx];
+      } else {
+        fmt[`arg${argIdx + 1}`] = args[argIdx];
+      }
+    }
+    return fmt;
+  }
+
+  function formatMessage(message: any) {
+    return JSON.stringify(message, undefined, 2);
+  }
+
+  function formatDate(d: Date) {
+    let month = ("" + (d.getMonth() + 1)).padStart(2, "0");
+    let day = ("" + d.getDate()).padStart(2, "0");
+    let h = ("" + d.getHours()).padStart(2, "0");
+    let m = ("" + "" + d.getMinutes()).padStart(2, "0");
+    let s = ("" + "" + d.getSeconds()).padStart(2, "0");
+    return `${day}.${month} ${h}:${m}:${s}`;
+  }
+
+  async function subscribeMethod() {
     eventDecl.subscribed = !eventDecl.subscribed;
+    const connection = await getConnection(hub);
+    if (eventDecl.subscribed) {
+      connection.on(eventDecl.name, (...args) => {
+        messages.push({ date: new Date(), data: convertResponse(args) });
+        if (messages.length > MAX_MESSAGES) {
+          messages.splice(0, messages.length - MAX_MESSAGES);
+        }
+        messages = [...messages];
+        lastMessage = messages[messages.length - 1];
+      });
+    } else {
+      connection.off(eventDecl.name);
+    }
   }
 </script>
 
@@ -67,8 +111,8 @@
           <div class="subscription-messages">
             {#if messages?.length}
               {#each messages as message}
-                <button>
-                  {message.timestamp}
+                <button on:click="{e => selectedMessage = message}">
+                  {formatDate(message.date)}
                 </button>
               {/each}
             {:else}
@@ -76,7 +120,11 @@
             {/if}
           </div>
           <div class="subscription-content">
-            <pre>{#if selectedMessage}<code>{selectedMessage}</code>{/if}</pre>
+            {#if selectedMessage}
+              <pre><code>{formatMessage(selectedMessage.data)}</code></pre>
+            {:else if lastMessage}
+              <pre><code>{formatMessage(lastMessage.data)}</code></pre>
+            {/if}
           </div>
         </div>
       </div>
@@ -91,12 +139,8 @@
 
   .subscription-messages {
     min-height: 100px;
-    width: 33%;
     border-right: 1px solid rgb(245, 124, 0);
     background-color: rgb(255, 255, 255);
-    border-width: 1px;
-    border-style: solid;
-    border-color: rgb(255, 255, 255);
   }
 
   .subscription-content {
@@ -126,6 +170,7 @@
     justify-content: center;
     height: 100%;
     color: rgb(245, 124, 0);
+    margin-right: 5rem;
   }
 
   .heading,
@@ -233,5 +278,18 @@
     padding: 5px;
     margin-top: 1rem;
     margin-bottom: 0.5rem;
+  }
+
+  .subscription-messages {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+  }
+
+  .subscription-messages button {
+    border: none;
+    background: none;
+    border-bottom: 1px solid rgb(221, 221, 221);
+    padding: 5px 15px;
   }
 </style>

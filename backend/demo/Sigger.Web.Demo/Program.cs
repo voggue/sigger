@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Sigger;
 using Sigger.Generator;
-using Sigger.Generator.Server;
 using Sigger.Web.Demo.Data;
 using Sigger.Web.Demo.Hubs;
 using Sigger.Web.Demo.Models;
