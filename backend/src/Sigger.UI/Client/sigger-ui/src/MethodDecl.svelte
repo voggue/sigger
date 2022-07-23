@@ -96,7 +96,7 @@
           {:else}
             <div class="snippet" style="display: block;">
               <div class="json" style="display: block;">
-                <SampleValue type={method.returnType} />
+                <SampleValue {hub} type={method.returnType} />
               </div>
               <!-- snippet_json -->
               <div><!-- snippet --></div>

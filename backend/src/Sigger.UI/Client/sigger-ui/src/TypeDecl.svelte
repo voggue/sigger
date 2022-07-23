@@ -4,8 +4,11 @@
         isPrimitive,
         isNullable,
         isComplex,
+        isComplexOrEnum,
     } from "../../../../../../client/sigger-gen/lib/sigger-enums";
+    import { getModelId } from "./store";
 
+    export let hub: any;
     export let type: TypeDefinition | undefined;
 
     function fmtType() {
@@ -15,7 +18,11 @@
     }
 </script>
 
-<pre><code>{fmtType()} </code></pre>
+{#if isComplexOrEnum(type)}
+    <a href="#{getModelId(hub, type)}">{type.exportedType}</a>
+{:else}
+    <pre><code>{fmtType()} </code></pre>
+{/if}
 
 <style>
     pre {

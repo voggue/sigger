@@ -53,6 +53,12 @@ export async function fetchSchema(host: string) {
   }
 }
 
+export function getModelId(hub, model){
+  const h = hub.exportedName ?? hub;
+  const m = model.exportedName ?? model.exportedType ?? model;
+  return `$!/${h}/models/${m}`.toLowerCase();
+}
+
 export function initSettings(conf: SiggerUiSettings) {
   if (!conf.hubBaseUrl && conf.host) {
     const u = new URL(conf.host);

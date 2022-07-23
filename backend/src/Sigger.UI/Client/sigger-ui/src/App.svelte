@@ -39,18 +39,13 @@
     </ul>
   </div>
 
-  <pre>{JSON.stringify($definition, undefined, 2)}</pre>
-
-  <code>
-    <pre>{$error}</pre>
-  </code>
+  <!-- <pre>{JSON.stringify($definition, undefined, 2)}</pre> -->
 </main>
 
 <style>
   .ui-container {
     line-height: 1;
     font-family: "Droid Sans", sans-serif;
-    min-width: 760px;
     max-width: 960px;
     margin-left: auto;
     margin-right: auto;

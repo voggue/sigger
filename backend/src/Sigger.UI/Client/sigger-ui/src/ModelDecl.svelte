@@ -1,4 +1,7 @@
 <script lang="ts">
+  import { isComplexOrEnum } from "../../../../../../client/sigger-gen/lib/sigger-enums";
+  import { getModelId } from "./store";
+
   export let hub: any;
   export let typeDecl: any;
 
@@ -6,7 +9,7 @@
 </script>
 
 <div class="wrapper">
-  <div class="title" id={typeDecl.exportedName}>
+  <div class="title" id={getModelId(hub, typeDecl)}>
     <span class="model-box"
       ><button
         class="model-box-control"
@@ -16,19 +19,31 @@
           ><span class="model-box"
             ><span class="model model-title">{typeDecl.caption} </span></span
           ></span
-        ><span class="model-toggle" class:collapsed={!expanded} /><span
-        /></button
-      ></span
-    >
-  </div>
+        ><span class="model-toggle" class:collapsed={!expanded} /><span />
+      </button>
+    </span>
 
-  {#if expanded}
-    <div class="definition">
-      <pre>
-  {JSON.stringify(typeDecl, undefined, 2)}
-</pre>
-    </div>
-  {/if}
+    {#if expanded && typeDecl.properties?.length}
+      <div class="definition">
+        <table>
+          {#each typeDecl.properties as property}
+            <tr>
+              <td>{property.exportedName}:</td>
+              <td>
+                {#if isComplexOrEnum(property.type)}
+                  <a href="#{getModelId(hub, property.type.exportedType)}"
+                    >{property.type.exportedType}</a
+                  >
+                {:else}
+                  {property.type.exportedType}
+                {/if}
+              </td>
+            </tr>
+          {/each}
+        </table>
+      </div>
+    {/if}
+  </div>
 </div>
 
 <style>
@@ -79,7 +94,15 @@
   }
 
   .definition {
-    border-top: 1px solid rgba(0, 0, 0, 0.07);
-    padding: 1rem;
+    border-radius: 4px;
+    padding: 0.5rem 0.2rem;
+  }
+
+  .definition table {
+    font-size: 0.9rem;
+  }
+
+  .definition table td {
+    padding: 0.2rem 0.5rem;
   }
 </style>

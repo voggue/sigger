@@ -1,4 +1,6 @@
 <script lang="ts">
+import Catalog from "./Catalog.svelte";
+
     import EventDecl from "./EventDecl.svelte";
     import MethodDecl from "./MethodDecl.svelte";
     import ModelDecl from "./ModelDecl.svelte";
@@ -6,6 +8,7 @@
     export let hub: any;
 
     let modelsExpanded = true;
+    let catalogsExpanded = true;
 
     function toggleView() {
         hub.hidden = !hub.hidden;
@@ -68,7 +71,7 @@
     {#if hub?.definitions?.types?.length}
         <div class="models">
             <h4>
-                <button on:click={() => modelsExpanded = !modelsExpanded}>
+                <button on:click={() => (modelsExpanded = !modelsExpanded)}>
                     <span>Models</span>
                     {#if modelsExpanded}
                         <svg width="20" height="20" focusable="false">
@@ -94,15 +97,35 @@
         </div>
     {/if}
 
-    <!-- <ul class="catalogs">
-        {#if hub?.definitions?enums?.length}
-            {#each hub.definitions?enums as e}
-            <li class="catalog">
-                <CatalogDecl {hub} eventDecl={ev} />
-            </li>
-            {/each}
-        {/if}
-    </ul> -->
+    {#if hub?.definitions?.enums?.length}
+        <div class="models">
+            <h4>
+                <button on:click={() => (catalogsExpanded = !catalogsExpanded)}>
+                    <span>Catalogs</span>
+                    {#if catalogsExpanded}
+                        <svg width="20" height="20" focusable="false">
+                            <use xlink:href="#large-arrow-up" /></svg
+                        >
+                    {:else}
+                        <svg width="20" height="20" focusable="false">
+                            <use xlink:href="#large-arrow-down" /></svg
+                        >
+                    {/if}
+                </button>
+            </h4>
+
+            {#if modelsExpanded}
+                <ul class="models">
+                    {#each hub.definitions.enums as e}
+                        <li class="model">
+                            <Catalog {hub} catalogDef={e} />
+                        </li>
+                    {/each}
+                </ul>
+            {/if}
+        </div>
+    {/if}
+
 {:else}
     <hr />
 {/if}
@@ -199,13 +222,13 @@
         font-weight: 100;
         font-size: 1.2rem;
     }
-    
-    div.models h4 button span{
+
+    div.models h4 button span {
         flex-grow: 1;
         text-align: left;
     }
 
-    ul.models{
+    ul.models {
         border-top: 1px solid rgba(59, 65, 81, 0.3);
         list-style: none;
         padding: 1rem;

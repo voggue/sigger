@@ -66,13 +66,11 @@ import { onDestroy } from "svelte";
     background-color: #2c3e50;
     padding: 9px 14px 19px 14px;
     height: 23px;
-    min-width: 775px;
   }
 
   .sigger-ui-wrap {
     line-height: 1;
     font-family: "Droid Sans", sans-serif;
-    min-width: 760px;
     max-width: 960px;
     margin-left: auto;
     margin-right: auto;
