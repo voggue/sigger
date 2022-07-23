@@ -20,7 +20,7 @@ public class GenerationCoreTests
         // should generate a hub without exception
          var options = new SchemaGeneratorOptions();
         var generator = new SchemaGenerator(options);
-        generator.AddHub(typeof(ParserCoreTests.SimpleHub));
+        generator.AddHub(typeof(ParserCoreTests.SimpleHub), "/test");
 
         var doc = generator.CreateSchema();
 
@@ -33,7 +33,7 @@ public class GenerationCoreTests
     {
         var options = new SchemaGeneratorOptions();
         var generator = new SchemaGenerator(options);
-        generator.AddHub(typeof(ParserCoreTests.SimpleHub));
+        generator.AddHub(typeof(ParserCoreTests.SimpleHub), "/test");
 
         var doc = generator.CreateSchema();
 
@@ -55,7 +55,7 @@ public class GenerationCoreTests
     {
         var options = new SchemaGeneratorOptions();
         var generator = new SchemaGenerator(options);
-        generator.AddHub(typeof(ParserGenericTests.HubForGenericTests));
+        generator.AddHub(typeof(ParserGenericTests.HubForGenericTests), "/test");
 
         var doc = generator.CreateSchema();
 
@@ -73,7 +73,7 @@ public class GenerationCoreTests
     {
         var options = new SchemaGeneratorOptions();
         var generator = new SchemaGenerator(options);
-        generator.AddHub(typeof(TestClasses.TestHub));
+        generator.AddHub(typeof(TestClasses.TestHub), "/test");
 
         var doc = generator.CreateSchema();
         var json = doc.ToJson();

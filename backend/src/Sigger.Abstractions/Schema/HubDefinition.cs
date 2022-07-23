@@ -14,6 +14,9 @@ public class HubDefinition : IHasExportedName
 
     [JsonPropertyName(SchemaConstants.DESCRIPTION)]
     public string? Description  { get; set; }
+    
+    [JsonPropertyName(SchemaConstants.PATH)]
+    public string? Path  { get; set; }
 
     [JsonPropertyName(SchemaConstants.NAME)]
     public string? Name { get; set; }

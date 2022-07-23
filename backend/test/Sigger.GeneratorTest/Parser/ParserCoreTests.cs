@@ -21,7 +21,7 @@ public partial class ParserCoreTests : ParserTestsBase
         };
 
         var typeParser = new CodeParser(options);
-        var result = typeParser.Parse(typeof(SimpleHub));
+        var result = typeParser.Parse(typeof(SimpleHub), "/test");
         TraceVisitorResult(typeParser);
 
         Assert.Equal(4, result.Methods.Count);
@@ -46,7 +46,7 @@ public partial class ParserCoreTests : ParserTestsBase
         };
 
         var typeParser = new CodeParser(options);
-        typeParser.Parse(typeof(SimpleHub));
+        typeParser.Parse(typeof(SimpleHub), "/test");
         TraceVisitorResult(typeParser);
         Assert.True(typeParser.TryGetType<SimpleBaseClass>(out _));
         Assert.True(typeParser.TryGetType<HubBaseClass>(out _));
@@ -62,7 +62,7 @@ public partial class ParserCoreTests : ParserTestsBase
         };
 
         var typeParser = new CodeParser(options);
-        typeParser.Parse(typeof(SimpleHub));
+        typeParser.Parse(typeof(SimpleHub), "/test");
         TraceVisitorResult(typeParser);
         Assert.True(typeParser.TryGetType<SimpleBaseClass>(out _));
     }
@@ -76,13 +76,14 @@ public partial class ParserCoreTests : ParserTestsBase
         };
 
         var typeParser = new CodeParser(options);
-        typeParser.Parse(typeof(SimpleHubWithOverload));
+        typeParser.Parse(typeof(SimpleHubWithOverload), "/test");
         TraceVisitorResult(typeParser);
         Assert.True(typeParser.TryGetType<SimpleHubWithOverload>(out var c));
         var srcClass = c as SrcClass;
         Assert.NotNull(srcClass);
         Assert.Single(srcClass!.Methods);
-        Assert.NotNull(srcClass.Methods.FirstOrDefault(x => x.Name.Equals(nameof(SimpleHubWithOverload.EmptyHubFunctionAsync))));
+        Assert.NotNull(srcClass.Methods.FirstOrDefault(x =>
+            x.Name.Equals(nameof(SimpleHubWithOverload.EmptyHubFunctionAsync))));
     }
 
     [Fact]
@@ -94,7 +95,7 @@ public partial class ParserCoreTests : ParserTestsBase
         };
 
         var typeParser = new CodeParser(options);
-        typeParser.Parse(typeof(SimpleHub));
+        typeParser.Parse(typeof(SimpleHub), "/test");
         TraceVisitorResult(typeParser);
         Assert.True(typeParser.TryGetType<SimpleClass>(out var simpleClass));
         Assert.Null((simpleClass as SrcClass)?.FindProperty(nameof(SimpleClass.DotNetEnumType)));
@@ -110,7 +111,7 @@ public partial class ParserCoreTests : ParserTestsBase
         };
 
         var typeParser = new CodeParser(options);
-        typeParser.Parse(typeof(SimpleHub));
+        typeParser.Parse(typeof(SimpleHub), "/test");
         TraceVisitorResult(typeParser);
         Assert.True(typeParser.TryGetType<SimpleClass>(out var simpleClass));
         Assert.NotNull((simpleClass as SrcClass)?.FindProperty(nameof(SimpleClass.DotNetEnumType)));
@@ -126,7 +127,7 @@ public partial class ParserCoreTests : ParserTestsBase
         };
 
         var typeParser = new CodeParser(options);
-        typeParser.Parse(typeof(SimpleHub));
+        typeParser.Parse(typeof(SimpleHub), "/test");
         TraceVisitorResult(typeParser);
         Assert.Equal(3, typeParser.Types.Count());
         Assert.Equal(3, typeParser.Enums.Count());
@@ -138,7 +139,7 @@ public partial class ParserCoreTests : ParserTestsBase
     public void ShouldHaveEnumItems()
     {
         var typeParser = new CodeParser();
-        typeParser.Parse(typeof(SimpleHub));
+        typeParser.Parse(typeof(SimpleHub), "/test");
         TraceVisitorResult(typeParser);
 
         var enums = typeParser.Enums.ToArray();
@@ -155,7 +156,7 @@ public partial class ParserCoreTests : ParserTestsBase
     public void ShouldExtractGenerics()
     {
         var typeParser = new CodeParser();
-        typeParser.Parse(typeof(SimpleHub));
+        typeParser.Parse(typeof(SimpleHub), "/test");
         TraceVisitorResult(typeParser);
 
         // SimpleInterface is defined in a generic Parameter of KeyValuePair
@@ -176,7 +177,7 @@ public partial class ParserCoreTests : ParserTestsBase
         };
 
         var typeParser = new CodeParser(options);
-        typeParser.Parse(typeof(SimpleHub));
+        typeParser.Parse(typeof(SimpleHub), "/test");
         TraceVisitorResult(typeParser);
         Assert.False(typeParser.TryGetType<SimpleBaseClass>(out _), "Should include base class");
         Assert.True(typeParser.TryGetType<int>(out _), "Should include primitive type int");
@@ -187,7 +188,7 @@ public partial class ParserCoreTests : ParserTestsBase
     public void ShouldHaveRightDictionaryTypes()
     {
         var typeParser = new CodeParser();
-        var result = typeParser.Parse(typeof(SimpleHub));
+        var result = typeParser.Parse(typeof(SimpleHub), "/test");
         var method = result.FindMethod(nameof(SimpleHub.MyDictionaryFuncAsync));
         Assert.NotNull(method);
         AssertType(method!.ReturnType, typeof(IDictionary), TypeFlags.IsDictionary);
@@ -199,7 +200,7 @@ public partial class ParserCoreTests : ParserTestsBase
     public void ShouldHaveRightArrayType()
     {
         var typeParser = new CodeParser();
-        typeParser.Parse(typeof(SimpleHub));
+        typeParser.Parse(typeof(SimpleHub), "/test");
         var simpleClass = typeParser.Types.FirstOrDefault(x => x.Name == nameof(SimpleClass));
         Assert.NotNull(simpleClass);
 
@@ -214,7 +215,7 @@ public partial class ParserCoreTests : ParserTestsBase
     public void ShouldHaveRightListType()
     {
         var typeParser = new CodeParser();
-        typeParser.Parse(typeof(SimpleHub));
+        typeParser.Parse(typeof(SimpleHub), "/test");
         var simpleClass = typeParser.Types.FirstOrDefault(x => x.Name == nameof(SimpleClass));
         Assert.NotNull(simpleClass);
 

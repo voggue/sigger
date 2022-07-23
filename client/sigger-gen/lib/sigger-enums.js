@@ -14,7 +14,14 @@ export function hasAnyFlag(flags, ...testFlags) {
   const args = Array.prototype.slice.call(arguments, 1);
   for (let argIdx = 0; argIdx < args.length; argIdx++) {
     const arg = args[argIdx];
-    if (hasFlag(flags, arg)) return true;
+    if (Array.isArray(arg) && arg.length) {
+      for (let subArgIdx = 0; subArgIdx < arg.length; subArgIdx++) {
+        const subArg = arg[subArgIdx];
+        if (hasFlag(flags, subArg)) return true;
+      }
+    } else {
+      if (hasFlag(flags, arg)) return true;
+    }
   }
   return false;
 }

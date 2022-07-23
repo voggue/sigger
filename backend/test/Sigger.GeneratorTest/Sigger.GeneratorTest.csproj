@@ -33,8 +33,4 @@
       <ProjectReference Include="..\..\src\Sigger.Generator\Sigger.Generator.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Assets" />
-    </ItemGroup>
-
 </Project>

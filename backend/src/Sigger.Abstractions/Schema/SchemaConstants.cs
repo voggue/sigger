@@ -18,6 +18,7 @@ public static class SchemaConstants
     public const string NAME = "name";
     public const string CAPTION = "caption";
     public const string DESCRIPTION = "description";
+    public const string PATH = "path";
     public const string ORDER = "sortOrder";
     public const string DOTNET_TYPE = "dotnetType";
     public const string DOTNET_NAME = "dotnetName";

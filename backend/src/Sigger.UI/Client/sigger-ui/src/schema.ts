@@ -90,6 +90,7 @@ export interface MethodArgumentDefinition extends TypeDefinition {
 export interface HubDefinition {
     clrType?: string | undefined;
     caption?: string | undefined;
+    path?: string | undefined;
     description?: string | undefined;
     name?: string | undefined;
     exportedName?: string | undefined;

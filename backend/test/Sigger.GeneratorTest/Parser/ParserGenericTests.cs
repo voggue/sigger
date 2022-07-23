@@ -20,7 +20,7 @@ public partial class ParserGenericTests : ParserTestsBase
             ExtractPrimitives = true
         };
         var typeParser = new CodeParser(options);
-        typeParser.Parse(typeof(HubForGenericTests));
+        typeParser.Parse(typeof(HubForGenericTests), "/test");
         TraceVisitorResult(typeParser);
         Assert.True(typeParser.TryGetType<SimpleClass>(out _));
         Assert.True(typeParser.TryGetType<NestedGenericClass<string[]>>(out _));

@@ -7,9 +7,15 @@ public class SrcHub : SrcClass
 {
     private readonly Dictionary<Type, SrcDefBase> _parsedTypes = new();
 
-    public SrcHub(Type baseType) : base(baseType)
+    public SrcHub(Type baseType, string path) : base(baseType)
     {
+        Path = path;
     }
+
+    /// <summary>
+    /// Configured SignalR path (endpoint) of the Hub
+    /// </summary>
+    public string Path { get; }
 
     /// <summary>
     /// List of all found types in parsed types

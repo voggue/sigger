@@ -28,12 +28,12 @@ public class CodeParser
         _options = options ?? new CodeParserOptions();
     }
 
-    public SrcHub Parse(Type type)
+    public SrcHub Parse(Type type, string path)
     {
         if (_parsedHubs.TryGetValue(type, out var hub))
             return hub;
 
-        hub = new SrcHub(type);
+        hub = new SrcHub(type, path);
         _parsedHubs.Add(type, hub);
 
         _options.SupportedAssemblies.Add(type.Assembly);

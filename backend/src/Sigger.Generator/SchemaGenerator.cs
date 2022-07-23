@@ -18,9 +18,9 @@ public class SchemaGenerator
         _typeParser = new CodeParser(_options.ParserOptions);
     }
 
-    public SrcHub AddHub(Type type)
+    public SrcHub AddHub(Type type, string path)
     {
-        return _typeParser.Parse(type);
+        return _typeParser.Parse(type, path);
     }
 
     public SchemaDocument CreateSchema()
@@ -128,6 +128,7 @@ public class SchemaGenerator
             ClrType = hub.ClrType.Format(true),
             Caption = display?.GetName() ?? hub.Name,
             Description = display?.GetDescription(),
+            Path = hub.Path,
             Name = hub.Name,
             ExportedName = options.GetFormattedName(hub.ClrType.Name, FormatKind.HubName),
             Properties = properties,

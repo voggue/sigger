@@ -35,7 +35,7 @@ public static class StartupExtensions
 
         options.MapHubs(builder);
         foreach (var hub in options.HubTypes)
-            generator.AddHub(hub.Key);
+            generator.AddHub(hub.Key, hub.Value);
 
         var doc = generator.CreateSchema();
 

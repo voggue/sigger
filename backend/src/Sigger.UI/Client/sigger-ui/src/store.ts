@@ -77,7 +77,7 @@ export async function getConnection(hub: HubWithMetadata) {
     console.log("connect to " + hub.caption ?? hub.name);
     const s = get(settings);
     const c = new signalR.HubConnectionBuilder()
-      .withUrl(new URL(`/hubs/v1/chat`, s.hubBaseUrl).toString() , {
+      .withUrl(new URL(hub.path, s.hubBaseUrl).toString() , {
         skipNegotiation: true,
         transport: signalR.HttpTransportType.WebSockets,
         withCredentials: false
