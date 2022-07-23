@@ -3,20 +3,23 @@
   import Title from "./Title.svelte";
   import { onDestroy, onMount } from "svelte";
   import HubDecl from "./HubDecl.svelte";
-  import { fetchSchema, definition, info, error } from "./store";
+  import { fetchSchema, definition, info, error, initSettings } from "./store";
 
   export let directory = "";
   export let host = "";
+  export let hubBaseUrl: URL | null = null;
 
   const unsubscribe = definition.subscribe((value) => {
     info.update(() => value?.info);
   });
 
   onMount(async () => {
+    initSettings({directory, host, hubBaseUrl});
     await fetchSchema(host);
   });
 
   onDestroy(unsubscribe);
+
 </script>
 
 <main>
@@ -36,8 +39,6 @@
     </ul>
   </div>
 
-  <h1>Hello {directory}!</h1>
-
   <pre>{JSON.stringify($definition, undefined, 2)}</pre>
 
   <code>
@@ -53,6 +54,7 @@
     max-width: 960px;
     margin-left: auto;
     margin-right: auto;
+    padding: 0 0.25rem;
   }
 
   .ressources {

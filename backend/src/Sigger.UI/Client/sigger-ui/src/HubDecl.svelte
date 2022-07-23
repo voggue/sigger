@@ -1,8 +1,11 @@
 <script lang="ts">
     import EventDecl from "./EventDecl.svelte";
     import MethodDecl from "./MethodDecl.svelte";
+    import ModelDecl from "./ModelDecl.svelte";
 
     export let hub: any;
+
+    let modelsExpanded = true;
 
     function toggleView() {
         hub.hidden = !hub.hidden;
@@ -10,7 +13,7 @@
 
     function toggleExpanded() {
         hub.expanded = !hub.expanded;
-        if(hub.expanded){
+        if (hub.expanded) {
             hub.hidden = false;
         }
 
@@ -61,6 +64,45 @@
             {/each}
         {/if}
     </ul>
+
+    {#if hub?.definitions?.types?.length}
+        <div class="models">
+            <h4>
+                <button on:click={() => modelsExpanded = !modelsExpanded}>
+                    <span>Models</span>
+                    {#if modelsExpanded}
+                        <svg width="20" height="20" focusable="false">
+                            <use xlink:href="#large-arrow-up" /></svg
+                        >
+                    {:else}
+                        <svg width="20" height="20" focusable="false">
+                            <use xlink:href="#large-arrow-down" /></svg
+                        >
+                    {/if}
+                </button>
+            </h4>
+
+            {#if modelsExpanded}
+                <ul class="models">
+                    {#each hub.definitions.types as t}
+                        <li class="model">
+                            <ModelDecl {hub} typeDecl={t} />
+                        </li>
+                    {/each}
+                </ul>
+            {/if}
+        </div>
+    {/if}
+
+    <!-- <ul class="catalogs">
+        {#if hub?.definitions?enums?.length}
+            {#each hub.definitions?enums as e}
+            <li class="catalog">
+                <CatalogDecl {hub} eventDecl={ev} />
+            </li>
+            {/each}
+        {/if}
+    </ul> -->
 {:else}
     <hr />
 {/if}
@@ -130,5 +172,42 @@
 
     ul.endpoints li {
         margin-bottom: 0.5rem;
+    }
+
+    div.models {
+        border: 1px solid rgba(59, 65, 81, 0.3);
+        border-radius: 4px;
+        margin: 30px 0;
+    }
+
+    div.models h4 {
+        align-items: center;
+        color: #606060;
+        cursor: pointer;
+        display: flex;
+        margin: 0;
+        padding: 0.6rem 2rem 0.6rem 0.6rem;
+        transition: all 0.2s;
+        display: flex;
+    }
+
+    div.models h4 button {
+        border: none;
+        background-color: transparent;
+        display: flex;
+        flex-grow: 1;
+        font-weight: 100;
+        font-size: 1.2rem;
+    }
+    
+    div.models h4 button span{
+        flex-grow: 1;
+        text-align: left;
+    }
+
+    ul.models{
+        border-top: 1px solid rgba(59, 65, 81, 0.3);
+        list-style: none;
+        padding: 1rem;
     }
 </style>

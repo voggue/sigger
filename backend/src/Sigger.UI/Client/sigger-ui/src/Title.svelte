@@ -31,6 +31,7 @@
   }
 
   .info_title {
+    margin-top: 1rem;
     padding-bottom: 0.3rem;
     font-weight: 100;
     font-size: 2rem;

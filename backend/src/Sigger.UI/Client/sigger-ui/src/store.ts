@@ -1,8 +1,9 @@
-import { writable } from "svelte/store";
+import { writable, get } from "svelte/store";
 import type { HubConnection } from "@microsoft/signalr";
 import * as signalR from "@microsoft/signalr";
 import type { SchemaDocument, HubDefinition } from "./schema";
 
+export const settings = writable<SiggerUiSettings | null>(null);
 export const error = writable<any | null>(null);
 export const info = writable<any | null>(null);
 export const url = writable<string | null>(null);
@@ -12,6 +13,12 @@ export const busy = writable(false);
 
 export interface HubWithMetadata extends HubDefinition {
   connection?: HubConnection | null;
+}
+
+export interface SiggerUiSettings {
+  directory: string | null,
+  host: string | null,
+  hubBaseUrl?: URL | null
 }
 
 export async function fetchSchema(host: string) {
@@ -46,6 +53,15 @@ export async function fetchSchema(host: string) {
   }
 }
 
+export function initSettings(conf: SiggerUiSettings) {
+  if (!conf.hubBaseUrl && conf.host) {
+    const u = new URL(conf.host);
+    conf.hubBaseUrl = new URL(u.origin);
+  }
+
+  settings.update(() => conf);
+}
+
 export async function getConnection(hub: HubWithMetadata) {
   if (hub.connection) {
     return hub.connection;
@@ -53,8 +69,9 @@ export async function getConnection(hub: HubWithMetadata) {
 
   try {
     console.log("connect to " + hub.caption ?? hub.name);
+    const s = get(settings);
     const c = new signalR.HubConnectionBuilder()
-      .withUrl("https://localhost:7291/hubs/v1/chat", {
+      .withUrl(new URL(`/hubs/v1/chat`, s.hubBaseUrl).toString() , {
         skipNegotiation: true,
         transport: signalR.HttpTransportType.WebSockets,
         withCredentials: false

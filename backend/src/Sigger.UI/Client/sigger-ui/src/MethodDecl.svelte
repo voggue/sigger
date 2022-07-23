@@ -1,24 +1,45 @@
 <script lang="ts">
   import { fade } from "svelte/transition";
   import ParametersDecl from "./ParametersDecl.svelte";
+  import { getConnection } from "./store";
   import SampleValue from "./TypeDecl.svelte";
 
   export let hub: any;
   export let method: any;
 
+  let response: any | null | undefined = undefined;
+  let isInvoking = false;
+  let error: any | null = null;
+
   function toggleExpanded() {
     method.expanded = !method.expanded;
   }
 
-  function invokeMethod() {
-    let args = [];
-    if (method?.arguments?.length) {
-      for (let pIdx = 0; pIdx < method.arguments.length; pIdx++) {
-        const parameter = method.arguments[pIdx];
-        args.push(parameter.value ?? null);
+  function formatMessage(message: any) {
+    return JSON.stringify(message, undefined, 2);
+  }
+
+  async function invokeMethod() {
+    isInvoking = true;
+    error = null;
+    response = undefined;
+    try {
+      let args = [];
+      if (method?.arguments?.length) {
+        for (let pIdx = 0; pIdx < method.arguments.length; pIdx++) {
+          const parameter = method.arguments[pIdx];
+          args.push(parameter.value ?? null);
+        }
       }
+
+      const connection = await getConnection(hub);
+      response = await connection.invoke(method.name, ...args);
+      console.log("response", response);
+    } catch (err) {
+      error = err;
+    } finally {
+      isInvoking = false;
     }
-    alert(JSON.stringify(args));
   }
 </script>
 
@@ -91,12 +112,28 @@
         <h4>Parameters</h4>
 
         <div class="parameters">
-          <ParametersDecl paramters={method.arguments} />
+          <ParametersDecl hideValue={false} paramters={method.arguments} />
         </div>
       </div>
     {/if}
 
-    <button class="btt-invoke" on:click={invokeMethod}>Try it out!</button>
+    <button disabled={isInvoking} class="btt-invoke" on:click={invokeMethod}
+      >Send</button
+    >
+
+    {#if error}
+      <div class="error">
+        <code>
+          <pre>{formatMessage(error)}</pre>
+        </code>
+      </div>
+    {/if}
+
+    {#if response !== undefined}
+      <div transition:fade class="response">
+        <pre><code>{formatMessage(response)}</code></pre>
+      </div>
+    {/if}
   </div>
 {/if}
 
@@ -186,6 +223,11 @@
     text-decoration: underline;
   }
 
+  .options button:disabled {
+    color: rgb(128, 128, 128);
+    background: rgb(215, 215, 215);
+  }
+
   .content {
     padding: 0rem 1rem;
     margin-bottom: 1rem;
@@ -244,5 +286,31 @@
     padding: 5px;
     margin-top: 1rem;
     margin-bottom: 0.5rem;
+  }
+
+  pre {
+    font-size: 0.85em;
+    line-height: 1.2em;
+    cursor: pointer;
+    overflow: auto;
+    background-color: rgb(255, 255, 255);
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(255, 255, 255);
+    border-image: initial;
+    padding: 0 0.25rem;
+    height: 100%;
+    margin: 0;
+  }
+
+  .response {
+    margin: 0.5rem 0 1rem 0;
+  }
+
+  .error {
+    border: 2px solid #cc0000;
+    background-color: #f2dede;
+    margin: 1rem 0;
+    padding: 5px;
   }
 </style>
