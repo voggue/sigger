@@ -24,6 +24,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{E912BDA1
 	ProjectSection(SolutionItems) = preProject
 		scripts\deploy.ps1 = scripts\deploy.ps1
 		directory.build.targets = directory.build.targets
+		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
 Global

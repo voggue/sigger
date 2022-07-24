@@ -38,8 +38,9 @@ First you need a **.net6** ASP.net application. E.g. https://docs.microsoft.com/
 
 #### Include the sigger nuget Package
 
-```
-TODO: nuget package is not currently deployed
+```bash
+Install-Package Voggue.Sigger
+Install-Package Voggue.Sigger.UI
 ```
 
 #### Create a Hub
