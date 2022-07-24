@@ -220,7 +220,7 @@ export class AppComponent {
 
     private add(msg: Message | null) {
         if (msg?.user && msg?.content) {
-            const m = this.messages$.value;
+            msg.user = msg.user.length < 8 ? msg.user : msg.user.substring(0, 6) + '...';
             m.push(msg);
             this.messages$.next([...m]);
         }
@@ -343,4 +343,4 @@ now we should be able to chat with our client.
 > user in the chat, the connection ID is displayed. However, 
 > this is accepted due to the simplicity for these first steps.
 
-![image](https://user-images.githubusercontent.com/17086780/180666201-b5096df0-f35a-49b8-96c2-9da2de2c4d2f.png)
+![image](https://user-images.githubusercontent.com/17086780/180666468-934f6763-2c3e-47b5-80bd-9bb5a9185ff0.png)
