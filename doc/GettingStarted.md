@@ -190,37 +190,39 @@ Since we also want to send messages, we need a function to send them.
 
 
 ```typescript
-import {Component} from '@angular/core';
-import {ChatHub} from '../hubs/ChatHub';
-import {BehaviorSubject} from "rxjs";
+import { Component } from '@angular/core';
+import { ChatHub, Message } from '../hubs/ChatHub';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
-  title = 'sigger-getting-started';
+    title = 'sigger-getting-started';
 
-  // never use subjects as public properties
-  readonly messages$ = new BehaviorSubject<{ user: string, message: string }[]>([]);
+    // never use subjects as public properties
+    readonly messages$ = new BehaviorSubject<Message[]>([]);
 
-  constructor(private _chatService: ChatHub) {
-    _chatService.onMessageReceived$.subscribe(x => {
-      if (x.user && x.message)
-        this.messages$.next([...this.messages$.value, {user: x.user, message: x.message}]);
-    });
-    
-    // The tryConnect is not always necessary, as the hub establishes a connection on the 1st request. 
-    // In this case, however, we need the connection before the first call in order to receive message events.
-    this._chatService.tryConnect();
-  }
+    constructor(private _chatService: ChatHub) {
+        _chatService.onMessageReceived$.subscribe((x) => {
+            if (x.user && x.message) {
+                const m = this.messages$.value;
+                m.push(x);
+                this.messages$.next([...m]);
+            }
+        });
+        this._chatService.tryConnect();
+    }
 
-  sendMessage(message: string) {
-    // don't forget to subscribe
-    this._chatService.sendMessage(message)
-     .subscribe();
-  }
+    sendMessage(message: string) {
+        if (message === 'clear') {
+            this.messages$.next([]);
+            return;
+        }
+        this._chatService.sendMessage(message).subscribe();
+    }
 }
 ```
 

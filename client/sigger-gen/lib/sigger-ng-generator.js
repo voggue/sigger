@@ -22,7 +22,7 @@ export async function generate(definition, output, flags) {
 class NgHubGeneration extends TsHubGeneration {
   /** true if either a class or an enum is present */
   get hasModels() {
-    return this.hub.definitions?.types?.length > 0 && this.hub.definitions?.enums?.length > 0;
+    return this.hub.definitions?.types?.length > 0 || this.hub.definitions?.enums?.length > 0;
   }
 
   constructor(ngGeneration, hub) {

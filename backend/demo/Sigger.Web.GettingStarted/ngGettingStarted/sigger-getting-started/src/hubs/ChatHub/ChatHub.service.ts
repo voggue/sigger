@@ -30,7 +30,7 @@ export class ChatHub {
   /* -------------------------------------------------------------------------------- */
 
   /** Internal OnMessageReceived ReplaySubject */
-  private readonly _onMessageReceived$ = new ReplaySubject<{user: string | null, message: string | null}>();
+  private readonly _onMessageReceived$ = new ReplaySubject<models.Message | null>();
   /** OnMessageReceived Observable */
   readonly onMessageReceived$ = this._onMessageReceived$.asObservable();
 
@@ -56,7 +56,7 @@ export class ChatHub {
       .build();
 
     /** register events */
-    this._connection.on("OnMessageReceived", (user, message) => this._onMessageReceived$.next({user, message}));
+    this._connection.on("OnMessageReceived", (message) => this._onMessageReceived$.next(message));
 
 
     /** connect to hub-server */
@@ -72,7 +72,7 @@ export class ChatHub {
 
   /** SendMessage */
   sendMessage(message: string | null) {
-    return this.invoke<boolean>('SendMessage', message);
+    return this.invoke<models.Message | null>('SendMessage', message);
   }
 
   /* -------------------------------------------------------------------------------- */

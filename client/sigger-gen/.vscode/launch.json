@@ -4,14 +4,13 @@
   // Weitere Informationen finden Sie unter https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
-    
     {
-      "type": "pwa-node",
+      "type": "node",
       "request": "launch",
-      "name": "Launch Program",
+      "name": "Start Sigger",
       "skipFiles": ["<node_internals>/**"],
       "program": "${workspaceFolder}\\bin\\cli",
-      "args": ["https://localhost:7291/sigger/sigger.json", "./test/hubs", "-v"]
+      "args": ["https://localhost:7178/sigger/sigger.json", "./test/hubs", "-v"]
     }
   ]
 }
