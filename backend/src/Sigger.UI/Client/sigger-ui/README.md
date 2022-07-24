@@ -2,7 +2,7 @@
 
 To enable easy testing of hubs, sigger provides an integrated web interface called Sigger-UI which provides documentation and a test environment for all configured hubs.
 
-The web client is developed with svelte and kept very simple with very few dependencies to other frameworks.
+The web client is developed with https://svelte.dev and kept very simple with very few dependencies to other frameworks.
 
 ## Developing the client
 
