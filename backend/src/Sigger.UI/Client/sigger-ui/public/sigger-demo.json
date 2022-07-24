@@ -1,0 +1,741 @@
+{
+    "specificationVersion": "1.0.0",
+    "info": {
+      "title": "SigGen specification",
+      "version": "1.0.0"
+    },
+    "hubs": [
+      {
+        "dotnetType": "Sigger.Web.Demo.Hubs.ChatHub",
+        "caption": "ChatHub",
+        "path": "/hubs/v1/chat",
+        "name": "ChatHub",
+        "exportedName": "ChatHub",
+        "methods": [
+          {
+            "name": "SendMessageToChatRoom",
+            "exportedName": "sendMessageToChatRoom",
+            "caption": "SendMessageToChatRoom",
+            "arguments": [
+              {
+                "exportedName": "chatRoomId",
+                "dotnetName": "chatRoomId",
+                "sortOrder": 0,
+                "type": {
+                  "exportedType": "string",
+                  "flags": "IsString, IsPrimitive",
+                  "flagsValue": 33792,
+                  "caption": "Guid"
+                },
+                "flagsValue": 0
+              },
+              {
+                "exportedName": "message",
+                "dotnetName": "message",
+                "sortOrder": 1,
+                "type": {
+                  "exportedType": "string",
+                  "flags": "IsNullable, IsString, IsPrimitive",
+                  "flagsValue": 34048,
+                  "caption": "String"
+                },
+                "flagsValue": 0
+              }
+            ],
+            "returnType": {
+              "exportedType": "boolean",
+              "flags": "IsTask, IsBoolean, IsPrimitive",
+              "flagsValue": 34824,
+              "caption": "Boolean"
+            }
+          },
+          {
+            "name": "SendBroadcastMessage",
+            "exportedName": "sendBroadcastMessage",
+            "caption": "SendBroadcastMessage",
+            "arguments": [
+              {
+                "exportedName": "message",
+                "dotnetName": "message",
+                "sortOrder": 0,
+                "type": {
+                  "exportedType": "string",
+                  "flags": "IsNullable, IsString, IsPrimitive",
+                  "flagsValue": 34048,
+                  "caption": "String"
+                },
+                "flagsValue": 0
+              }
+            ],
+            "returnType": {
+              "exportedType": "boolean",
+              "flags": "IsTask, IsBoolean, IsPrimitive",
+              "flagsValue": 34824,
+              "caption": "Boolean"
+            }
+          },
+          {
+            "name": "WhoAmI",
+            "exportedName": "whoAmI",
+            "caption": "WhoAmI",
+            "arguments": [
+              
+            ],
+            "returnType": {
+              "exportedType": "User",
+              "flags": "IsNullable, IsComplex",
+              "flagsValue": 16640,
+              "caption": "User"
+            }
+          },
+          {
+            "name": "GetChatRooms",
+            "exportedName": "getChatRooms",
+            "caption": "GetChatRooms",
+            "arguments": [
+              
+            ],
+            "returnType": {
+              "exportedType": "ChatRoomSubscription[]",
+              "flags": "IsArray, IsTask, IsNullable",
+              "flagsValue": 266,
+              "caption": "Array",
+              "arrayElement": {
+                "exportedType": "ChatRoomSubscription",
+                "flags": "IsNullable, IsComplex",
+                "flagsValue": 16640,
+                "caption": "ChatRoomSubscription"
+              }
+            }
+          },
+          {
+            "name": "Login",
+            "exportedName": "login",
+            "caption": "Login",
+            "arguments": [
+              {
+                "exportedName": "userName",
+                "dotnetName": "userName",
+                "sortOrder": 0,
+                "type": {
+                  "exportedType": "string",
+                  "flags": "IsNullable, IsString, IsPrimitive",
+                  "flagsValue": 34048,
+                  "caption": "String"
+                },
+                "flagsValue": 0
+              },
+              {
+                "exportedName": "color",
+                "dotnetName": "color",
+                "sortOrder": 1,
+                "type": {
+                  "exportedType": "string",
+                  "flags": "IsNullable, IsString, IsPrimitive",
+                  "flagsValue": 34048,
+                  "caption": "String"
+                },
+                "flagsValue": 0
+              }
+            ],
+            "returnType": {
+              "exportedType": "User",
+              "flags": "IsTask, IsNullable, IsComplex",
+              "flagsValue": 16648,
+              "caption": "User"
+            }
+          },
+          {
+            "name": "Logout",
+            "exportedName": "logout",
+            "caption": "Logout",
+            "arguments": [
+              
+            ],
+            "returnType": {
+              "exportedType": "boolean",
+              "flags": "IsTask, IsBoolean, IsPrimitive",
+              "flagsValue": 34824,
+              "caption": "Boolean"
+            }
+          },
+          {
+            "name": "CreateChatRoom",
+            "exportedName": "createChatRoom",
+            "caption": "CreateChatRoom",
+            "arguments": [
+              {
+                "exportedName": "roomName",
+                "dotnetName": "roomName",
+                "sortOrder": 0,
+                "type": {
+                  "exportedType": "string",
+                  "flags": "IsNullable, IsString, IsPrimitive",
+                  "flagsValue": 34048,
+                  "caption": "String"
+                },
+                "flagsValue": 0
+              }
+            ],
+            "returnType": {
+              "exportedType": "ChatRoomSubscription",
+              "flags": "IsTask, IsNullable, IsComplex",
+              "flagsValue": 16648,
+              "caption": "ChatRoomSubscription"
+            }
+          },
+          {
+            "name": "EnterChatRoom",
+            "exportedName": "enterChatRoom",
+            "caption": "EnterChatRoom",
+            "arguments": [
+              {
+                "exportedName": "uid",
+                "dotnetName": "uid",
+                "sortOrder": 0,
+                "type": {
+                  "exportedType": "string",
+                  "flags": "IsString, IsPrimitive",
+                  "flagsValue": 33792,
+                  "caption": "Guid"
+                },
+                "flagsValue": 0
+              }
+            ],
+            "returnType": {
+              "exportedType": "ChatRoom",
+              "flags": "IsTask, IsNullable, IsComplex",
+              "flagsValue": 16648,
+              "caption": "ChatRoom"
+            }
+          },
+          {
+            "name": "LeaveChatRoom",
+            "exportedName": "leaveChatRoom",
+            "caption": "LeaveChatRoom",
+            "arguments": [
+              {
+                "exportedName": "roomId",
+                "dotnetName": "roomId",
+                "sortOrder": 0,
+                "type": {
+                  "exportedType": "string",
+                  "flags": "IsString, IsPrimitive",
+                  "flagsValue": 33792,
+                  "caption": "Guid"
+                },
+                "flagsValue": 0
+              }
+            ],
+            "returnType": {
+              "exportedType": "boolean",
+              "flags": "IsTask, IsBoolean, IsPrimitive",
+              "flagsValue": 34824,
+              "caption": "Boolean"
+            }
+          }
+        ],
+        "events": [
+          {
+            "keepValue": 1,
+            "name": "OnUserLoggedIn",
+            "exportedName": "onUserLoggedIn",
+            "caption": "OnUserLoggedIn",
+            "arguments": [
+              {
+                "exportedName": "user",
+                "dotnetName": "user",
+                "sortOrder": 0,
+                "type": {
+                  "exportedType": "User",
+                  "flags": "IsNullable, IsComplex",
+                  "flagsValue": 16640,
+                  "caption": "User"
+                },
+                "flagsValue": 0
+              }
+            ],
+            "returnType": {
+              "exportedType": "void",
+              "flags": "IsTask, IsVoid",
+              "flagsValue": 131080,
+              "caption": "Void"
+            }
+          },
+          {
+            "keepValue": 1,
+            "name": "OnUserLoggedOut",
+            "exportedName": "onUserLoggedOut",
+            "caption": "OnUserLoggedOut",
+            "arguments": [
+              {
+                "exportedName": "user",
+                "dotnetName": "user",
+                "sortOrder": 0,
+                "type": {
+                  "exportedType": "User",
+                  "flags": "IsNullable, IsComplex",
+                  "flagsValue": 16640,
+                  "caption": "User"
+                },
+                "flagsValue": 0
+              }
+            ],
+            "returnType": {
+              "exportedType": "void",
+              "flags": "IsTask, IsVoid",
+              "flagsValue": 131080,
+              "caption": "Void"
+            }
+          },
+          {
+            "keepValue": 1,
+            "name": "OnUserEnteredChatRoom",
+            "exportedName": "onUserEnteredChatRoom",
+            "caption": "OnUserEnteredChatRoom",
+            "arguments": [
+              {
+                "exportedName": "room",
+                "dotnetName": "room",
+                "sortOrder": 0,
+                "type": {
+                  "exportedType": "ChatRoom",
+                  "flags": "IsNullable, IsComplex",
+                  "flagsValue": 16640,
+                  "caption": "ChatRoom"
+                },
+                "flagsValue": 0
+              },
+              {
+                "exportedName": "user",
+                "dotnetName": "user",
+                "sortOrder": 1,
+                "type": {
+                  "exportedType": "User",
+                  "flags": "IsNullable, IsComplex",
+                  "flagsValue": 16640,
+                  "caption": "User"
+                },
+                "flagsValue": 0
+              }
+            ],
+            "returnType": {
+              "exportedType": "void",
+              "flags": "IsTask, IsVoid",
+              "flagsValue": 131080,
+              "caption": "Void"
+            }
+          },
+          {
+            "keepValue": 1,
+            "name": "OnUserLeftChatRoom",
+            "exportedName": "onUserLeftChatRoom",
+            "caption": "OnUserLeftChatRoom",
+            "arguments": [
+              {
+                "exportedName": "room",
+                "dotnetName": "room",
+                "sortOrder": 0,
+                "type": {
+                  "exportedType": "ChatRoom",
+                  "flags": "IsNullable, IsComplex",
+                  "flagsValue": 16640,
+                  "caption": "ChatRoom"
+                },
+                "flagsValue": 0
+              },
+              {
+                "exportedName": "user",
+                "dotnetName": "user",
+                "sortOrder": 1,
+                "type": {
+                  "exportedType": "User",
+                  "flags": "IsNullable, IsComplex",
+                  "flagsValue": 16640,
+                  "caption": "User"
+                },
+                "flagsValue": 0
+              }
+            ],
+            "returnType": {
+              "exportedType": "void",
+              "flags": "IsTask, IsVoid",
+              "flagsValue": 131080,
+              "caption": "Void"
+            }
+          },
+          {
+            "keepValue": 1,
+            "name": "OnChatRoomMessageReceived",
+            "exportedName": "onChatRoomMessageReceived",
+            "caption": "OnChatRoomMessageReceived",
+            "arguments": [
+              {
+                "exportedName": "roomId",
+                "dotnetName": "roomId",
+                "sortOrder": 0,
+                "type": {
+                  "exportedType": "string",
+                  "flags": "IsString, IsPrimitive",
+                  "flagsValue": 33792,
+                  "caption": "Guid"
+                },
+                "flagsValue": 0
+              },
+              {
+                "exportedName": "roomName",
+                "dotnetName": "roomName",
+                "sortOrder": 1,
+                "type": {
+                  "exportedType": "string",
+                  "flags": "IsNullable, IsString, IsPrimitive",
+                  "flagsValue": 34048,
+                  "caption": "String"
+                },
+                "flagsValue": 0
+              },
+              {
+                "exportedName": "user",
+                "dotnetName": "user",
+                "sortOrder": 2,
+                "type": {
+                  "exportedType": "User",
+                  "flags": "IsNullable, IsComplex",
+                  "flagsValue": 16640,
+                  "caption": "User"
+                },
+                "flagsValue": 0
+              },
+              {
+                "exportedName": "message",
+                "dotnetName": "message",
+                "sortOrder": 3,
+                "type": {
+                  "exportedType": "string",
+                  "flags": "IsNullable, IsString, IsPrimitive",
+                  "flagsValue": 34048,
+                  "caption": "String"
+                },
+                "flagsValue": 0
+              }
+            ],
+            "returnType": {
+              "exportedType": "void",
+              "flags": "IsTask, IsVoid",
+              "flagsValue": 131080,
+              "caption": "Void"
+            }
+          },
+          {
+            "keepValue": 1,
+            "name": "OnMessageReceived",
+            "exportedName": "onMessageReceived",
+            "caption": "OnMessageReceived",
+            "arguments": [
+              {
+                "exportedName": "user",
+                "dotnetName": "user",
+                "sortOrder": 0,
+                "type": {
+                  "exportedType": "User",
+                  "flags": "IsNullable, IsComplex",
+                  "flagsValue": 16640,
+                  "caption": "User"
+                },
+                "flagsValue": 0
+              },
+              {
+                "exportedName": "type",
+                "dotnetName": "type",
+                "sortOrder": 1,
+                "type": {
+                  "exportedType": "MessageType",
+                  "flags": "IsEnum",
+                  "flagsValue": 8192,
+                  "caption": "MessageType"
+                },
+                "flagsValue": 0
+              },
+              {
+                "exportedName": "message",
+                "dotnetName": "message",
+                "sortOrder": 2,
+                "type": {
+                  "exportedType": "string",
+                  "flags": "IsNullable, IsString, IsPrimitive",
+                  "flagsValue": 34048,
+                  "caption": "String"
+                },
+                "flagsValue": 0
+              }
+            ],
+            "returnType": {
+              "exportedType": "void",
+              "flags": "IsTask, IsVoid",
+              "flagsValue": 131080,
+              "caption": "Void"
+            }
+          },
+          {
+            "keepValue": 1,
+            "name": "OnChatRoomsChanged",
+            "exportedName": "onChatRoomsChanged",
+            "caption": "OnChatRoomsChanged",
+            "arguments": [
+              {
+                "exportedName": "chatRooms",
+                "dotnetName": "chatRooms",
+                "sortOrder": 0,
+                "type": {
+                  "exportedType": "string[]",
+                  "flags": "IsArray, IsNullable",
+                  "flagsValue": 258,
+                  "caption": "Array",
+                  "arrayElement": {
+                    "exportedType": "string",
+                    "flags": "IsString, IsPrimitive",
+                    "flagsValue": 33792,
+                    "caption": "Guid"
+                  }
+                },
+                "flagsValue": 0
+              }
+            ],
+            "returnType": {
+              "exportedType": "void",
+              "flags": "IsTask, IsVoid",
+              "flagsValue": 131080,
+              "caption": "Void"
+            }
+          }
+        ],
+        "definitions": {
+          "types": [
+            {
+              "dotnetType": "Sigger.Web.Demo.Hubs.User",
+              "caption": "User",
+              "properties": [
+                {
+                  "type": {
+                    "exportedType": "string",
+                    "flags": "IsString, IsPrimitive",
+                    "flagsValue": 33792,
+                    "caption": "Guid"
+                  },
+                  "exportedName": "uid",
+                  "caption": "Uid",
+                  "name": "Uid"
+                },
+                {
+                  "type": {
+                    "exportedType": "string",
+                    "flags": "IsNullable, IsString, IsPrimitive",
+                    "flagsValue": 34048,
+                    "caption": "String"
+                  },
+                  "exportedName": "name",
+                  "caption": "Name",
+                  "name": "Name"
+                },
+                {
+                  "type": {
+                    "exportedType": "string",
+                    "flags": "IsNullable, IsString, IsPrimitive",
+                    "flagsValue": 34048,
+                    "caption": "String"
+                  },
+                  "exportedName": "color",
+                  "caption": "Color",
+                  "name": "Color"
+                },
+                {
+                  "type": {
+                    "exportedType": "string",
+                    "flags": "IsNullable, IsString, IsPrimitive",
+                    "flagsValue": 34048,
+                    "caption": "String"
+                  },
+                  "exportedName": "imageLink",
+                  "caption": "ImageLink",
+                  "name": "ImageLink"
+                },
+                {
+                  "type": {
+                    "exportedType": "UserRole",
+                    "flags": "IsEnum",
+                    "flagsValue": 8192,
+                    "caption": "UserRole"
+                  },
+                  "exportedName": "role",
+                  "caption": "Role",
+                  "name": "Role"
+                }
+              ],
+              "exportedName": "User"
+            },
+            {
+              "dotnetType": "Sigger.Web.Demo.Hubs.ChatRoomSubscription",
+              "caption": "ChatRoomSubscription",
+              "properties": [
+                {
+                  "type": {
+                    "exportedType": "boolean",
+                    "flags": "IsBoolean, IsPrimitive",
+                    "flagsValue": 34816,
+                    "caption": "Boolean"
+                  },
+                  "exportedName": "subscribed",
+                  "caption": "Subscribed",
+                  "name": "Subscribed"
+                },
+                {
+                  "type": {
+                    "exportedType": "string",
+                    "flags": "IsString, IsPrimitive",
+                    "flagsValue": 33792,
+                    "caption": "Guid"
+                  },
+                  "exportedName": "uid",
+                  "caption": "Uid",
+                  "name": "Uid"
+                },
+                {
+                  "type": {
+                    "exportedType": "string",
+                    "flags": "IsNullable, IsString, IsPrimitive",
+                    "flagsValue": 34048,
+                    "caption": "String"
+                  },
+                  "exportedName": "name",
+                  "caption": "Name",
+                  "name": "Name"
+                },
+                {
+                  "type": {
+                    "exportedType": "User[]",
+                    "flags": "IsArray, IsNullable",
+                    "flagsValue": 258,
+                    "caption": "Array",
+                    "arrayElement": {
+                      "exportedType": "User",
+                      "flags": "IsNullable, IsComplex",
+                      "flagsValue": 16640,
+                      "caption": "User"
+                    }
+                  },
+                  "exportedName": "members",
+                  "caption": "Members",
+                  "name": "Members"
+                }
+              ],
+              "exportedName": "ChatRoomSubscription"
+            },
+            {
+              "dotnetType": "Sigger.Web.Demo.Hubs.ChatRoom",
+              "caption": "ChatRoom",
+              "properties": [
+                {
+                  "type": {
+                    "exportedType": "string",
+                    "flags": "IsString, IsPrimitive",
+                    "flagsValue": 33792,
+                    "caption": "Guid"
+                  },
+                  "exportedName": "uid",
+                  "caption": "Uid",
+                  "name": "Uid"
+                },
+                {
+                  "type": {
+                    "exportedType": "string",
+                    "flags": "IsNullable, IsString, IsPrimitive",
+                    "flagsValue": 34048,
+                    "caption": "String"
+                  },
+                  "exportedName": "name",
+                  "caption": "Name",
+                  "name": "Name"
+                },
+                {
+                  "type": {
+                    "exportedType": "User[]",
+                    "flags": "IsArray, IsNullable",
+                    "flagsValue": 258,
+                    "caption": "Array",
+                    "arrayElement": {
+                      "exportedType": "User",
+                      "flags": "IsNullable, IsComplex",
+                      "flagsValue": 16640,
+                      "caption": "User"
+                    }
+                  },
+                  "exportedName": "members",
+                  "caption": "Members",
+                  "name": "Members"
+                }
+              ],
+              "exportedName": "ChatRoom"
+            }
+          ],
+          "enums": [
+            {
+              "dotnetType": "Sigger.Web.Demo.Hubs.UserRole",
+              "caption": "UserRole",
+              "exportedName": "UserRole",
+              "items": [
+                {
+                  "dotnetName": "Guest",
+                  "caption": "Unregistered user",
+                  "value": 0,
+                  "valueText": "Guest",
+                  "exportedName": "GUEST",
+                  "exportedValue": "Guest"
+                },
+                {
+                  "dotnetName": "User",
+                  "caption": "Registered user",
+                  "value": 1,
+                  "valueText": "User",
+                  "exportedName": "USER",
+                  "exportedValue": "User"
+                },
+                {
+                  "dotnetName": "Admin",
+                  "caption": "Administrator",
+                  "value": 2,
+                  "valueText": "Admin",
+                  "exportedName": "ADMIN",
+                  "exportedValue": "Admin"
+                }
+              ]
+            },
+            {
+              "dotnetType": "Sigger.Web.Demo.Hubs.MessageType",
+              "caption": "MessageType",
+              "exportedName": "MessageType",
+              "items": [
+                {
+                  "dotnetName": "Broadcast",
+                  "caption": "Broadcast Message",
+                  "description": "A broadcast message",
+                  "value": 0,
+                  "valueText": "Broadcast",
+                  "exportedName": "BROADCAST",
+                  "exportedValue": "Broadcast"
+                },
+                {
+                  "dotnetName": "Private",
+                  "caption": "Private Message",
+                  "description": "A private message from another user",
+                  "value": 1,
+                  "valueText": "Private",
+                  "exportedName": "PRIVATE",
+                  "exportedValue": "Private"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  }

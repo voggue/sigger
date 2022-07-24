@@ -4,7 +4,7 @@
 
 {#if $error}
   <div class="error">
-    <pre>{JSON.stringify($error, undefined, 2)}</pre>
+    <pre>{$error}</pre>
   </div>
 {/if}
 

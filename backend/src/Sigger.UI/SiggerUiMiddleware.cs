@@ -14,12 +14,14 @@ public class SiggerUiMiddleware
     private readonly SiggerUiOptions _options;
     private readonly Dictionary<string, NameTypeContent> _fileContents = new(StringComparer.OrdinalIgnoreCase);
     private const string INDEX_RESOURCE_NAME = "Sigger.UI.Resources.index.html";
-    private const string THEME_RESOURCE_NAME = "Sigger.UI.Resources.theme.css";
+    private const string JS_RESOURCE_NAME = "Sigger.UI.Resources.build.bundle.js";
+    private const string JSMAP_RESOURCE_NAME = "Sigger.UI.Resources.build.bundle.js.map";
+    private const string CSS_RESOURCE_NAME = "Sigger.UI.Resources.build.bundle.css";
+    private const string GLOBAL_CSS_RESOURCE_NAME = "Sigger.UI.Resources.global.css";
     private const string FAVICON_RESOURCE_NAME = "Sigger.UI.Resources.favicon.ico";
-    private const string SCREEN_CSS_RESOURCE_NAME = "Sigger.UI.Resources.screen.css";
-    private const string STYLE_CSS_RESOURCE_NAME = "Sigger.UI.Resources.style.css";
-    private const string SCRIPT_RESOURCE_NAME = "Sigger.UI.Resources.sigger.js";
-    private const string IMAGE_LOGO_RESOURCE_NAME = "Sigger.UI.Resources.logo_small.png";
+    private const string FAVICON_PNG_RESOURCE_NAME = "Sigger.UI.Resources.favicon.png";
+    private const string LOGO_RESOURCE_NAME = "Sigger.UI.Resources.logo.png";
+
 
     public SiggerUiMiddleware(SiggerUiOptions options)
     {
@@ -50,17 +52,19 @@ public class SiggerUiMiddleware
         });
     }
 
-    private readonly Dictionary<string, NameType> _fileMapping = new(StringComparer.OrdinalIgnoreCase)
+    internal static Dictionary<string, NameType> FileMapping { get; } = new(StringComparer.OrdinalIgnoreCase)
     {
-        {"theme.css", new(THEME_RESOURCE_NAME, "text/css", false)},
-        {"style.css", new(STYLE_CSS_RESOURCE_NAME, "text/css", false)},
-        {"screen.css", new(SCREEN_CSS_RESOURCE_NAME, "text/css", false)},
-        {"sigger.js", new(SCRIPT_RESOURCE_NAME, "application/javascript", false)},
+        {"bundle.css", new(CSS_RESOURCE_NAME, "text/css", false)},
+        {"global.css", new(GLOBAL_CSS_RESOURCE_NAME, "text/css", false)},
+        {"bundle.js", new(JS_RESOURCE_NAME, "application/javascript", false)},
+        {"bundle.js.map", new(JSMAP_RESOURCE_NAME, "application/json", false)},
         {"favicon.ico", new(FAVICON_RESOURCE_NAME, "image/icon", true)},
-        {"logo.png", new(IMAGE_LOGO_RESOURCE_NAME, "image/png", true)},
+        {"favicon.png", new(FAVICON_PNG_RESOURCE_NAME, "image/png", true)},
+        {"logo.png", new(LOGO_RESOURCE_NAME, "image/png", true)},
         {"index.html", new(INDEX_RESOURCE_NAME, "text/html", false)},
         {"index.htm", new(INDEX_RESOURCE_NAME, "text/html", false)},
         {"index", new(INDEX_RESOURCE_NAME, "text/html", false)},
+        {"", new(INDEX_RESOURCE_NAME, "text/html", false)},
     };
 
     private bool TryGetFile(HttpContext httpContext, [MaybeNullWhen(false)] out NameTypeContent file)
@@ -68,7 +72,7 @@ public class SiggerUiMiddleware
         var fullPath = httpContext.Request.Path.ToString();
         var fileName = Path.GetFileName(fullPath);
 
-        if (!_fileMapping.TryGetValue(fileName, out var fileContentType))
+        if (!FileMapping.TryGetValue(fileName, out var fileContentType))
             fileContentType = new NameType(INDEX_RESOURCE_NAME, "text/html", false);
 
         // currently i use always the same index.html file.
@@ -106,20 +110,9 @@ public class SiggerUiMiddleware
         }
         catch (Exception e)
         {
-            var resources = GetType().Assembly.GetManifestResourceNames();
-            const string err = "<html>" +
-                               "<head><title>Sigger UI Error</title></head>" +
-                               "<body>" +
-                               "<h1>Error</h1>" +
-                               "<p style='color: red; font-size: 1.2em;'>{0}</p>" +
-                               "<h2>Available</h2>" +
-                               "<p>{1}</p>" +
-                               "</body>" +
-                               "</html>";
-
             var eHtml = e.ToString().Replace("\n", "<br>");
-            var resourcesHtml = string.Join("<br>", resources);
-            content = string.Format(err, eHtml, resourcesHtml);
+            content = string.Format( eHtml);
+            httpContext.Response.StatusCode = 404;
             contentType = "text/html";
         }
 
@@ -148,7 +141,7 @@ public class SiggerUiMiddleware
             .Replace("{{url}}", url, sb);
     }
 
-    private record NameType(string Name, string ContentType, bool Binary);
+    internal record NameType(string Name, string ContentType, bool Binary);
 
     private record NameTypeContent(string ContentType, object Content);
 }

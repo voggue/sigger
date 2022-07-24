@@ -6,7 +6,11 @@
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "start": "sirv public --no-clear",
-    "check": "svelte-check --tsconfig ./tsconfig.json"
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "copy:bundle": "copyfiles -f public/build/* ./../../Resources/build",
+    "copy:public": "copyfiles -f  public/global.css ./../../Resources",
+    "copy": "npm run copy:bundle & npm run copy:public",
+    "deploy": "npm run build&npm run copy"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.0.0",
@@ -18,14 +22,15 @@
     "rollup-plugin-livereload": "^2.0.0",
     "rollup-plugin-svelte": "^7.0.0",
     "rollup-plugin-terser": "^7.0.0",
-    "svelte": "^3.0.0",
-    "svelte-check": "^2.0.0",
-    "svelte-preprocess": "^4.0.0",
+    "svelte": "^3.39.0",
+    "svelte-check": "^2.8.0",
+    "svelte-preprocess": "^4.10.7",
     "tslib": "^2.0.0",
     "typescript": "^4.0.0"
   },
   "dependencies": {
     "@microsoft/signalr": "^6.0.7",
+    "copyfiles": "^2.4.1",
     "sirv-cli": "^2.0.0"
   }
 }

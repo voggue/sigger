@@ -4,6 +4,7 @@ using Sigger.Generator;
 using Sigger.Web.Demo.Data;
 using Sigger.Web.Demo.Hubs;
 using Sigger.Web.Demo.Models;
+using Sigger.UI;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,6 +57,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
+app.UseSiggerUi();
 app.UseSigger();
 
 // app.UseAuthentication();

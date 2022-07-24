@@ -4,8 +4,11 @@
     isNumber,
     isComplex,
     isText,
+    isComplexOrEnum,
   } from "../../../../../../client/sigger-gen/lib/sigger-enums";
+  import { getModelId, hubs } from "./store";
 
+  export let hub: any;
   export let hideValue: boolean;
   export let paramters: any;
 </script>
@@ -26,7 +29,15 @@
       {#each paramters as argument}
         <tr>
           <td>{argument.exportedName}</td>
-          <td>{argument.type.exportedType}</td>
+          <td>
+            {#if isComplexOrEnum(argument.type)}
+              <a href="#{getModelId(hub, argument.type)}">
+                {argument.type.exportedType}
+              </a>
+            {:else}
+              {argument.type.exportedType}
+            {/if}
+          </td>
           <td>{argument.type.caption}</td>
           {#if !hideValue}
             <td>
@@ -42,7 +53,7 @@
                   style="width: 100%"
                   type="number"
                 />
-              {:else if isComplex(argument.type)}
+              {:else if isComplexOrEnum(argument.type)}
                 <div
                   style="width: 100%"
                   contenteditable="true"
@@ -73,6 +84,7 @@
     font-size: 0.9em;
     color: #666666;
     border-bottom: 1px solid #999999;
+    text-align: left;
   }
 
   table tbody tr td {
@@ -80,5 +92,6 @@
     font-size: 0.8em;
     font-weight: 100;
     color: #666666;
+    text-align: left;
   }
 </style>

@@ -18,25 +18,14 @@ public static class StartupExtensions
         builder.MapWhen(ctx => Precondition(ctx, options), middleware.HandleRequest);
         return builder;
     }
-
-    private static readonly HashSet<string> _supportedExtensions = new(StringComparer.OrdinalIgnoreCase)
-    {
-        ".css",
-        ".html",
-        ".htm",
-        ".png",
-        ".ico",
-        ".jpg",
-        ".js"
-    };
-
+    
     private static bool Precondition(HttpContext ctx, SiggerUiOptions options)
     {
         var fullPath = ctx.Request.Path.ToString();
         if (!fullPath.StartsWith(options.Path, StringComparison.OrdinalIgnoreCase))
             return false;
 
-        var ext = Path.GetExtension(fullPath);
-        return string.IsNullOrEmpty(ext) || _supportedExtensions.Contains(ext);
+        var relativePath = fullPath.Substring(options.Path.Length).TrimStart('/');
+        return SiggerUiMiddleware.FileMapping.ContainsKey(relativePath);
     }
 }

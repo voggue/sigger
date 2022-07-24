@@ -93,7 +93,7 @@
         <h4>Response</h4>
 
         <div class="parameters">
-          <ParametersDecl paramters={eventDecl.arguments} hideValue={true} />
+          <ParametersDecl {hub} paramters={eventDecl.arguments} hideValue={true} />
         </div>
       </div>
     {/if}

@@ -33,6 +33,7 @@
     <ItemGroup>
       <ProjectReference Include="..\..\src\Sigger.Extensions\Sigger.Extensions.csproj" />
       <ProjectReference Include="..\..\src\Sigger.Generator\Sigger.Generator.csproj" />
+      <ProjectReference Include="..\..\src\Sigger.UI\Sigger.UI.csproj" />
     </ItemGroup>
     
     <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

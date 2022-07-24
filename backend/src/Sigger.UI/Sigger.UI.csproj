@@ -16,20 +16,25 @@
     <ItemGroup>
         <None Remove="Resources\index.html" />
         <EmbeddedResource Include="Resources\index.html" />
-        <None Remove="Resources\theme.css" />
-        <EmbeddedResource Include="Resources\theme.css" />
-        <None Remove="Resources\screen.css" />
-        <EmbeddedResource Include="Resources\screen.css" />
-        <None Remove="Resources\style.css" />
-        <EmbeddedResource Include="Resources\style.css" />
-        <None Remove="Resources\logo_small.png" />
-        <EmbeddedResource Include="Resources\logo_small.png" />
-        <None Remove="Resources\sigger.js" />
-        <EmbeddedResource Include="Resources\sigger.js" />
+        <None Remove="Resources\build\bundle.css" />
+        <EmbeddedResource Include="Resources\build\bundle.css" />
+        <None Remove="Resources\build\bundle.js" />
+        <EmbeddedResource Include="Resources\build\bundle.js" />
+        <None Remove="Resources\favicon.ico" />
+        <EmbeddedResource Include="Resources\favicon.ico" />
+        <None Remove="Resources\build\bundle.js.map" />
+        <EmbeddedResource Include="Resources\build\bundle.js.map" />
+        <None Remove="Resources\global.css" />
+        <EmbeddedResource Include="Resources\global.css" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Sigger.Generator\Sigger.Generator.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Include="Resources\favicon.png" />
+      <EmbeddedResource Include="Resources\logo.png" />
     </ItemGroup>
 
 </Project>

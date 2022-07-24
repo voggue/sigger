@@ -114,7 +114,7 @@ import Catalog from "./Catalog.svelte";
                 </button>
             </h4>
 
-            {#if modelsExpanded}
+            {#if catalogsExpanded}
                 <ul class="models">
                     {#each hub.definitions.enums as e}
                         <li class="model">
