@@ -335,7 +335,7 @@ file `app.component.html` and replace the entire file with the following code:
 ```
 
 
-#### Let's chat
+### Let's chat
 
 now we should be able to chat with our client.
 
