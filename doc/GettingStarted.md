@@ -96,9 +96,8 @@ Now we open a second browser window, open the method
 then we should see the message in the first browser window 
 after pressing the *Send* button.
 
+![image](https://user-images.githubusercontent.com/17086780/180666183-47593bb0-175b-4006-a274-e4122b5df82b.png)
 
-
-TODO: Add the scrrenshot
 
 If you don't want to use the Sigger UI, you can also check 
 the functioning of the Sigger interface by entering the URL:
@@ -344,3 +343,4 @@ now we should be able to chat with our client.
 > user in the chat, the connection ID is displayed. However, 
 > this is accepted due to the simplicity for these first steps.
 
+![image](https://user-images.githubusercontent.com/17086780/180666201-b5096df0-f35a-49b8-96c2-9da2de2c4d2f.png)
