@@ -4,16 +4,26 @@ namespace Sigger.Web.GettingStarted.Hubs.Chat;
 
 public interface IChatEvents
 {
-    Task OnMessageReceived(string user, string message);
+    Task OnMessageReceived(Message message);
 }
 
 public class ChatHub : Hub<IChatEvents>
 {
-    public async Task<bool> SendMessage(string message)
+    public async Task<Message> SendMessage(string message)
     {
         // Getting user works only with authentication
         var user = Context.User?.Identity?.Name ?? Context.UserIdentifier ?? Context.ConnectionId;
-        await Clients.All.OnMessageReceived(user, message);
-        return true;
+        
+        await Clients.Others.OnMessageReceived(new Message(DateTime.Now, user, message, false));
+        return new Message(DateTime.Now, user, message, true);
     }
 }
+
+/// <summary>
+/// A Chat Message Object
+/// </summary>
+/// <param name="Time">Timestamp</param>
+/// <param name="User">UserInfo</param>
+/// <param name="Content">Content of the message</param>
+/// <param name="Sent">True if the message was sent, false if the message was received</param>
+public record Message(DateTime Time, string User, string Content, bool Sent);

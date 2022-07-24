@@ -299,7 +299,6 @@
     border-color: rgb(255, 255, 255);
     border-image: initial;
     padding: 0 0.25rem;
-    height: 100%;
     margin: 0;
   }
 
