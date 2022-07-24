@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <PropertyGroup>
+    <Version>0.1.13</Version>
+    <Product>Sigger</Product>
+    <Company>voggue</Company>
+    <Authors>Guenther Vogl</Authors>
+    <Copyright>Copyright (c) 2022, voggue</Copyright>
+    <RepositoryUrl>https://github.com/voggue/sigger</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIcon>images\SiggerLogo.png</PackageIcon>
+    <Description>
+            Sigger provides support for the use of SignalR (see https://docs.microsoft.com/en-us/aspnet/signalr/). The main parts are a schema generator, a test and documentation UI and help functions for SignalR Server.
+            Part of the project is also a client generator to generate code from the interface definition.
+            The name is based to https://swagger.io but for SignalR.
+        </Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="../Sigger.UI/Resources/logo.png" Pack="true" Visible="false" PackagePath="images\SiggerLogo.png" />
+  </ItemGroup>
+</Project>

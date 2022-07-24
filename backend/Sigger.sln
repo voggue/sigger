@@ -20,6 +20,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sigger.Web.GettingStarted",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sigger.UI", "src\Sigger.UI\Sigger.UI.csproj", "{D07B2F4F-3184-405C-8E72-FADAE7CF4605}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{E912BDA1-2ED8-4DE5-B4B5-C1777D03EF00}"
+	ProjectSection(SolutionItems) = preProject
+		scripts\deploy.ps1 = scripts\deploy.ps1
+		directory.build.targets = directory.build.targets
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <PackageId>Voggue.Sigger.UI</PackageId>
         <OutputType>Library</OutputType>
         <UsingMicrosoftNETSdkWeb>true</UsingMicrosoftNETSdkWeb>
         <TargetFramework>net6.0</TargetFramework>

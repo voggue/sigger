@@ -42,8 +42,8 @@ public class GenerationCoreTests
         var parsed = JsonSerializer.Deserialize<SchemaDocument>(json);
         Assert.NotNull(parsed);
         Assert.Equal(1, parsed!.Hubs.Count);
-        Assert.Equal(3, parsed.Hubs[0].Definitions.EnumDefinitions!.Count);
-        var dayOfWeek = parsed.Hubs[0].Definitions.EnumDefinitions!.First(x => x.ExportedName!.Equals(nameof(DayOfWeek)));
+        Assert.Equal(3, parsed.Hubs[0].Definitions!.EnumDefinitions!.Count);
+        var dayOfWeek = parsed.Hubs[0].Definitions!.EnumDefinitions!.First(x => x.ExportedName!.Equals(nameof(DayOfWeek)));
         // Values überprüfen
         Assert.Equal((int)DayOfWeek.Friday, dayOfWeek.Items!.First(x => x.ClrName!.Equals(nameof(DayOfWeek.Friday))).IntValue);
         Assert.Equal((int)DayOfWeek.Sunday, dayOfWeek.Items!.First(x => x.ClrName!.Equals(nameof(DayOfWeek.Sunday))).IntValue);
@@ -64,8 +64,8 @@ public class GenerationCoreTests
         var parsed = JsonSerializer.Deserialize<SchemaDocument>(json);
         Assert.NotNull(parsed);
         Assert.Equal(1, parsed!.Hubs.Count);
-        Assert.Equal(5, parsed.Hubs[0].Definitions.ClassDefinitions!.Count);
-        Assert.Single(parsed.Hubs[0].Definitions.EnumDefinitions!);
+        Assert.Equal(5, parsed.Hubs[0].Definitions!.ClassDefinitions!.Count);
+        Assert.Single(parsed.Hubs[0].Definitions!.EnumDefinitions!);
     }
 
     [Fact]

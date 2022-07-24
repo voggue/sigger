@@ -96,7 +96,7 @@ public abstract class ParserTestsBase : ITestOutputHelper
         foreach (var availableFlag in Enum.GetValues<TypeFlags>()
                      .Where(x => x != TypeFlags.None && requiredFlags.HasFlag(x)))
         {
-            Assert.True(type.Flags.HasFlag(availableFlag), $"required Flag {availableFlag} is not set for Type '{type}'.  Flags: {type.Flags}");
+            Assert.True(type!.Flags.HasFlag(availableFlag), $"required Flag {availableFlag} is not set for Type '{type}'.  Flags: {type.Flags}");
         }
     }
 }

@@ -208,7 +208,7 @@ public partial class ParserCoreTests : ParserTestsBase
 
         AssertType(intArray?.PropertyType, typeof(Array), TypeFlags.IsArray);
         Assert.Equal(1, intArray?.PropertyType.ArrayDim);
-        Assert.Equal(typeof(int), intArray?.PropertyType.ArrayElementType.ExportedType);
+        Assert.Equal(typeof(int), intArray?.PropertyType.ArrayElementType!.ExportedType);
     }
 
     [Fact]
@@ -223,7 +223,7 @@ public partial class ParserCoreTests : ParserTestsBase
 
         AssertType(flagList?.PropertyType, typeof(Array), TypeFlags.IsArray);
         Assert.Equal(1, flagList?.PropertyType.ArrayDim);
-        Assert.Equal(typeof(bool), flagList?.PropertyType.ArrayElementType.ExportedType);
+        Assert.Equal(typeof(bool), flagList?.PropertyType.ArrayElementType!.ExportedType);
     }
 
 
