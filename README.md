@@ -30,5 +30,5 @@ Sigger consists of several parts:
  > I will make sure that it can be adapted as easily as possible for other generators.
  
 ## Getting started
- 
-TODO Add link
+
+ https://github.com/voggue/sigger/blob/main/doc/GettingStarted.md
