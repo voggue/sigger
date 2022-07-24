@@ -191,8 +191,9 @@ Since we also want to send messages, we need a function to send them.
 
 ```typescript
 import { Component } from '@angular/core';
-import { ChatHub, Message } from '../hubs/ChatHub';
+import { ChatHub } from '../hubs/ChatHub';
 import { BehaviorSubject } from 'rxjs';
+import { Message } from 'src/hubs/ChatHub/models';
 
 @Component({
     selector: 'app-root',
@@ -206,13 +207,7 @@ export class AppComponent {
     readonly messages$ = new BehaviorSubject<Message[]>([]);
 
     constructor(private _chatService: ChatHub) {
-        _chatService.onMessageReceived$.subscribe((x) => {
-            if (x.user && x.message) {
-                const m = this.messages$.value;
-                m.push(x);
-                this.messages$.next([...m]);
-            }
-        });
+        _chatService.onMessageReceived$.subscribe((msg) => this.add(msg));
         this._chatService.tryConnect();
     }
 
@@ -221,7 +216,15 @@ export class AppComponent {
             this.messages$.next([]);
             return;
         }
-        this._chatService.sendMessage(message).subscribe();
+        this._chatService.sendMessage(message).subscribe((msg) => this.add(msg));
+    }
+
+    private add(msg: Message | null) {
+        if (msg?.user && msg?.content) {
+            const m = this.messages$.value;
+            m.push(msg);
+            this.messages$.next([...m]);
+        }
     }
 }
 ```
@@ -315,4 +318,29 @@ We take simple style classes from here: https://stackoverflow.com/questions/7115
 
 Of course, we also need a user interface for our client. To do this, we open the
 file `app.component.html` and replace the entire file with the following code:
+
+```html
+<div class="flex-column">
+  <div class="chat">
+    <div *ngFor="let m of messages$ | async" class="msg"
+    [attr.data-time]="m.user + ' ' + (m.time | date: 'HH:mm:ss')"
+    [class]="m.sent ? 'sent' : 'rcvd'">
+      {{ m.content }}
+  </div>
+  <div class="flex-row">
+    <input (keydown.enter)="sendMessage(inpMessage.value); inpMessage.value = ''" class="grow" type="text" #inpMessage>
+    <button (click)="sendMessage(inpMessage.value); inpMessage.value = ''">send</button>
+  </div>
+</div>
+
+```
+
+
+#### Let's chat
+
+now we should be able to chat with our client.
+
+> I realize that it is very unattractive that instead of a 
+> user in the chat, the connection ID is displayed. However, 
+> this is accepted due to the simplicity for these first steps.
 

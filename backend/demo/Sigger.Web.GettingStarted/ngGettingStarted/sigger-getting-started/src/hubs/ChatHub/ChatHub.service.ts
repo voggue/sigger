@@ -1,4 +1,5 @@
 import * as signalR from '@microsoft/signalr';
+import * as models from './models';
 import { ChatHubConfiguration } from './ChatHub.configuration';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, ReplaySubject, from, Observable, of, Subject, throwError } from 'rxjs';
