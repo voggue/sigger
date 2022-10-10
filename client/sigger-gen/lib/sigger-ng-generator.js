@@ -342,7 +342,7 @@ class NgHubGeneration extends TsHubGeneration {
 
   generateSignalRMethodsCode() {
     const methods = this.hub.methods;
-    if (!methods?.length) return;
+    if (!methods?.length) return '';
 
     let indent = indentation.L1;
     let indent2 = indentation.L2;
