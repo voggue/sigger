@@ -160,6 +160,7 @@ public class SchemaGenerator
         return new MethodArgumentDefinition
         {
             ExportedName = options.GetFormattedName(arg.Name, FormatKind.MethodArgumentName),
+            Caption = arg.SrcType.ExportedType?.Name,
             ClrName = arg.Name,
             Order = arg.Index,
             Type = CreateType(arg.SrcType, options),

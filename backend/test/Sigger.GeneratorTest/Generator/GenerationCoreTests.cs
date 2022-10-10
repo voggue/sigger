@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Text.Json;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.SignalR;
 using Sigger.Generator;
-using Sigger.Generator.Core;
 using Sigger.Schema;
 using Sigger.Test.Parser;
 using Xunit;
@@ -12,13 +9,13 @@ using Xunit.Abstractions;
 
 namespace Sigger.Test.Generator;
 
-public class GenerationCoreTests
+public partial class GenerationCoreTests
 {
     [Fact]
     public void ShouldGenerateSimpleDocument()
     {
         // should generate a hub without exception
-         var options = new SchemaGeneratorOptions();
+        var options = new SchemaGeneratorOptions();
         var generator = new SchemaGenerator(options);
         generator.AddHub(typeof(ParserCoreTests.SimpleHub), "/test");
 
@@ -27,7 +24,7 @@ public class GenerationCoreTests
         WriteLine(doc.ToJson());
     }
 
-    
+
     [Fact]
     public void ShouldGenerateEnums()
     {
@@ -41,13 +38,13 @@ public class GenerationCoreTests
         WriteLine(json);
         var parsed = JsonSerializer.Deserialize<SchemaDocument>(json);
         Assert.NotNull(parsed);
-        Assert.Equal(1, parsed!.Hubs.Count);
-        Assert.Equal(3, parsed.Hubs[0].Definitions!.EnumDefinitions!.Count);
+        Assert.StrictEqual(1, parsed!.Hubs.Count);
+        Assert.StrictEqual(3, parsed.Hubs[0].Definitions!.EnumDefinitions!.Count);
         var dayOfWeek = parsed.Hubs[0].Definitions!.EnumDefinitions!.First(x => x.ExportedName!.Equals(nameof(DayOfWeek)));
         // Values überprüfen
-        Assert.Equal((int)DayOfWeek.Friday, dayOfWeek.Items!.First(x => x.ClrName!.Equals(nameof(DayOfWeek.Friday))).IntValue);
-        Assert.Equal((int)DayOfWeek.Sunday, dayOfWeek.Items!.First(x => x.ClrName!.Equals(nameof(DayOfWeek.Sunday))).IntValue);
-        Assert.Equal((int)DayOfWeek.Saturday, dayOfWeek.Items!.First(x => x.ClrName!.Equals(nameof(DayOfWeek.Saturday))).IntValue);
+        Assert.StrictEqual((int)DayOfWeek.Friday, dayOfWeek.Items!.First(x => x.ClrName!.Equals(nameof(DayOfWeek.Friday))).IntValue);
+        Assert.StrictEqual((int)DayOfWeek.Sunday, dayOfWeek.Items!.First(x => x.ClrName!.Equals(nameof(DayOfWeek.Sunday))).IntValue);
+        Assert.StrictEqual((int)DayOfWeek.Saturday, dayOfWeek.Items!.First(x => x.ClrName!.Equals(nameof(DayOfWeek.Saturday))).IntValue);
     }
 
     [Fact]
@@ -63,8 +60,8 @@ public class GenerationCoreTests
         WriteLine(json);
         var parsed = JsonSerializer.Deserialize<SchemaDocument>(json);
         Assert.NotNull(parsed);
-        Assert.Equal(1, parsed!.Hubs.Count);
-        Assert.Equal(5, parsed.Hubs[0].Definitions!.ClassDefinitions!.Count);
+        Assert.StrictEqual(1, parsed!.Hubs.Count);
+        Assert.StrictEqual(5, parsed.Hubs[0].Definitions!.ClassDefinitions!.Count);
         Assert.Single(parsed.Hubs[0].Definitions!.EnumDefinitions!);
     }
 
@@ -80,9 +77,29 @@ public class GenerationCoreTests
         WriteLine(json);
         var parsed = JsonSerializer.Deserialize<SchemaDocument>(json);
         Assert.NotNull(parsed);
-        Assert.Equal(1, parsed!.Hubs.Count);
+        Assert.StrictEqual(1, parsed!.Hubs.Count);
         Assert.Single(parsed.Hubs[0].Methods!);
-        Assert.Equal(1, parsed.Hubs[0].Events!.Count);
+        Assert.StrictEqual(1, parsed.Hubs[0].Events!.Count);
+    }
+
+    [Fact]
+    public void ShouldGenerateComplexMethodSchemaInfo()
+    {
+        var options = new SchemaGeneratorOptions();
+        var generator = new SchemaGenerator(options);
+        generator.AddHub(typeof(TestClasses.ComplexTestHub), "/test");
+
+        var doc = generator.CreateSchema();
+        var json = doc.ToJson();
+        WriteLine(json);
+        var parsed = JsonSerializer.Deserialize<SchemaDocument>(json);
+        Assert.NotNull(parsed);
+        Assert.StrictEqual(1, parsed!.Hubs.Count);
+        Assert.Single(parsed.Hubs[0].Methods!);
+
+        var method = parsed.Hubs[0].Methods![0];
+        Assert.StrictEqual(5, method.Arguments!.Count);
+        Assert.Equal(nameof(DateTime), method.Arguments[4].Caption);
     }
 
     [Fact]
@@ -128,6 +145,7 @@ public class GenerationCoreTests
         Assert.Equal(SchemaConstants.SPECIFICATION_VERSION, parsed.SchemaVersion);
     }
 
+
     private readonly ITestOutputHelper _output;
 
     public GenerationCoreTests(ITestOutputHelper output)
@@ -142,27 +160,10 @@ public class GenerationCoreTests
     {
         _output.WriteLine(message);
     }
+}
 
-#pragma warning disable CS8618
-    // ReSharper disable once ClassNeverInstantiated.Global
-    public class TestClasses
-    {
-        public interface IEventsDefinition
-        {
-            Task OnHandleDataChanged(string text, int value);
-        }
-
-        public class TestHub : Hub<IEventsDefinition>
-        {
-            public string Name { get; set; }
-
-            public IEventsDefinition Events { get; set; }
-
-            public Task<int> DoSomethingAsync(string[] args)
-            {
-                return Task.FromResult(-1);
-            }
-        }
-    }
-#pragma warning restore CS8618
+public enum UnitTestEnum
+{
+    Ok,
+    Failure
 }

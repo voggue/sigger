@@ -185,7 +185,7 @@ public partial class ParserCoreTests : ParserTestsBase
     }
 
     [Fact]
-    public void ShouldHaveRightDictionaryTypes()
+    public void ShouldHaveProperDictionaryTypes()
     {
         var typeParser = new CodeParser();
         var result = typeParser.Parse(typeof(SimpleHub), "/test");
@@ -197,7 +197,7 @@ public partial class ParserCoreTests : ParserTestsBase
     }
 
     [Fact]
-    public void ShouldHaveRightArrayType()
+    public void ShouldHaveProperArrayType()
     {
         var typeParser = new CodeParser();
         typeParser.Parse(typeof(SimpleHub), "/test");
@@ -212,7 +212,7 @@ public partial class ParserCoreTests : ParserTestsBase
     }
 
     [Fact]
-    public void ShouldHaveRightListType()
+    public void ShouldHaveProperListType()
     {
         var typeParser = new CodeParser();
         typeParser.Parse(typeof(SimpleHub), "/test");

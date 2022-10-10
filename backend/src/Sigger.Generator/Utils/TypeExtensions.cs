@@ -14,6 +14,14 @@ public static class TypeExtensions
     }
 
     /// <summary>
+    /// Returns true if the specified type is a nullable type.
+    /// </summary>
+    public static bool IsNullable(this Type t)
+    {
+        return Nullable.GetUnderlyingType(t) != null;
+    }
+
+    /// <summary>
     /// Returns true if the specified type is a dictionary or list of keyvaluepair type.
     /// </summary>
     public static bool IsDictionary(this Type t,

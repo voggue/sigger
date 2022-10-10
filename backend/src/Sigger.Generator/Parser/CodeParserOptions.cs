@@ -28,9 +28,9 @@ public class CodeParserOptions
 
 
     /// <summary>
-    /// Registry of all assembies used for Type-Generation
+    /// Registry of all assembies ignored for Type-Generation
     /// </summary>
-    public HashSet<Assembly> SupportedAssemblies { get; } = new();
+    public HashSet<Assembly> IgnoredAssemblies { get; } = new();
 
     /// <summary>
     /// Registry of ignored types

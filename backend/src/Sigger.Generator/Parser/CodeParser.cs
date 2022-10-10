@@ -36,7 +36,6 @@ public class CodeParser
         hub = new SrcHub(type, path);
         _parsedHubs.Add(type, hub);
 
-        _options.SupportedAssemblies.Add(type.Assembly);
         ExtractTypeMembers(hub, hub, ExtractMembersFlags.Methods);
 
         var hubBase = type.GetBaseType(typeof(Hub<>));
@@ -70,7 +69,7 @@ public class CodeParser
                 src = hub;
                 return true;
             }
-            
+
             if (hub.TryGetType<T>(out src))
                 return true;
         }
@@ -299,7 +298,7 @@ public class CodeParser
             {
                 srcType.Flags |= TypeFlags.IsEnum;
 
-                if (!_options.ExtractEnumsFromNonSupportedAssemblies && !_options.SupportedAssemblies.Contains(type.Assembly))
+                if (!_options.ExtractEnumsFromNonSupportedAssemblies || _options.IgnoredAssemblies.Contains(type.Assembly))
                     return false;
 
                 if (srcHub.ContainsType(type)) return true;
@@ -308,9 +307,10 @@ public class CodeParser
             else if (_options.BuiltInTypes.TryGetValue(type, out var meta))
             {
                 srcType.Flags |= TypeFlags.IsPrimitive;
-                if (meta.Nullable) srcType.Flags |= TypeFlags.IsNullable;
+                if (meta.Nullable || srcType.ClrBaseType.IsNullable()) srcType.Flags |= TypeFlags.IsNullable;
                 srcType.Flags |= meta.Flags;
                 srcType.Primitive = meta;
+                srcType.ExportedType = type;
                 if (!_options.ExtractPrimitives) return true;
                 srcHub.TryAdd(type, srcType.GenericTypes);
             }
@@ -320,7 +320,7 @@ public class CodeParser
                 if (!srcHub.TryGetOrCreateSrcClass(type, srcType.GenericTypes, out var srcClass)) return true;
 
                 // Type is maybe not supported
-                if (!_options.SupportedAssemblies.Contains(type.Assembly))
+                if (_options.IgnoredAssemblies.Contains(type.Assembly))
                     return false;
                 ExtractTypeMembers(srcHub, srcClass, ExtractMembersFlags.Properties | ExtractMembersFlags.Fields | ExtractMembersFlags.Inherited);
             }
