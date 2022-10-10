@@ -35,6 +35,9 @@
       <ProjectReference Include="..\..\src\Sigger.Generator\Sigger.Generator.csproj" />
       <ProjectReference Include="..\..\src\Sigger.UI\Sigger.UI.csproj" />
     </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Models" />
+    </ItemGroup>
     
     <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
         <!-- Ensure Node.js is installed -->

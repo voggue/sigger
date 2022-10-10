@@ -29,6 +29,8 @@ export class AppComponent {
 
   private add(msg: Message | null) {
     if (msg?.user && msg?.content) {
+      msg.user =
+        msg.user.length < 8 ? msg.user : msg.user.substring(0, 6) + '...';
       const m = this.messages$.value;
       m.push(msg);
       this.messages$.next([...m]);

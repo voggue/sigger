@@ -3,11 +3,17 @@
     <PropertyGroup>
         <PackageId>Voggue.Sigger.Extensions</PackageId>
         <TargetFramework>net6.0</TargetFramework>
+        <UsingMicrosoftNETSdkWeb>true</UsingMicrosoftNETSdkWeb>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <RootNamespace>Sigger</RootNamespace>
     </PropertyGroup>
 
+
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+    
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
     </ItemGroup>

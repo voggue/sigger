@@ -14,4 +14,5 @@ public static class StartupExtensions
         services.AddSingleton(typeof(ISiggerRepository<,>), typeof(SiggerRepository<,>));
         return services;
     }
+
 }
