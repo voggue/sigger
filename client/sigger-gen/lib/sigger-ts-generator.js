@@ -151,9 +151,7 @@ export class TsHubGeneration {
 
   createTypeScriptClass(classDef) {
     let indent = indentation.L1;
-
-    const imports = [];
-
+    let imports = [];
     let code = '';
     code += `/** ${classDef.caption} */\n`;
     code += `/** generated from .net Type ${classDef.dotnetType} */\n`;
@@ -168,7 +166,7 @@ export class TsHubGeneration {
       let type = prop.type;
       if (hasFlag(type.flagsValue, TypeFlags.IsArray)) type = type.arrayElement;
 
-      if (isComplexOrEnum(type)) {
+      if (isComplexOrEnum(type) && classDef.exportedName !== type.exportedType) {
         imports.push(type.exportedType);
       }
     }
