@@ -31,7 +31,7 @@ function publish($project) {
         nuget push -source https://api.nuget.org/v3/index.json $nupkg.fullname
     }
     else {
-        write-error "Kein .nupkg gefunden für $project"
+        write-error ".nupkg file not found for $project"
     }
     
     # Cleanup

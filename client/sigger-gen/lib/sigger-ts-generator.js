@@ -174,6 +174,9 @@ export class TsHubGeneration {
     }
     code += `}\n\n`;
 
+    // remove duplicates
+    imports = imports.filter((v, i, a) => a.indexOf(v) === i);
+
     var importCode = '';
     if (imports.length) {
       for (let index = 0; index < imports.length; index++) {
