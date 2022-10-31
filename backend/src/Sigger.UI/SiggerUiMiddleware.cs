@@ -1,6 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Resources;
-using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;

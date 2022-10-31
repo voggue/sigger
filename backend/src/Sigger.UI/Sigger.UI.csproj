@@ -34,4 +34,8 @@
       <EmbeddedResource Include="Resources\logo.png" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Sigger.Generator\Sigger.Generator.csproj" />
+    </ItemGroup>
+
 </Project>

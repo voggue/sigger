@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.SignalR;
 using Sigger.Attributes;
 using Sigger.Generator.Utils;
@@ -158,6 +159,9 @@ public class CodeParser
 
     private void HandleField(SrcHub srcHub, FieldInfo pi, SrcDefBase parent)
     {
+        if (pi.GetCustomAttribute<JsonIgnoreAttribute>() != null)
+            return;
+        
         if (parent is not SrcClass srcClass) return;
         var propType = RegisterType(srcHub, pi.FieldType, out var isValidType);
         if (!isValidType) return;
@@ -168,6 +172,9 @@ public class CodeParser
 
     private void HandleProperty(SrcHub srcHub, PropertyInfo pi, SrcDefBase parent)
     {
+        if (pi.GetCustomAttribute<JsonIgnoreAttribute>() != null)
+            return;
+        
         if (parent is not SrcClass srcClass) return;
         var propType = RegisterType(srcHub, pi.PropertyType, out var isValidType);
         if (!isValidType) return;
