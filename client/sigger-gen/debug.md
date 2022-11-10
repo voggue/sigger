@@ -12,7 +12,9 @@ start the server and configure the .vscode/launch.json file.
 increment version number
 
 ```bash
-# if not logged in
+
+# only if not logged in
 npm login
+
 npm publish
 ```

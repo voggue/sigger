@@ -311,7 +311,7 @@ class NgHubGeneration extends TsHubGeneration {
 
     code += `${indent2}/** connect to hub-server */\n`;
     code += `${indent2}if (_config.autoConnect){\n`;
-    code += `${indent3}this.tryConnect();\n`;
+    code += `${indent3}this.getConnection();\n`;
     code += `${indent2}}\n\n`; // close constructor
 
     code += `${indent}}\n\n`; // close constructor
@@ -401,97 +401,73 @@ class NgHubGeneration extends TsHubGeneration {
 
   generateUtilMethodsCode() {
     let indent = indentation.L1;
-    let indent2 = indentation.L2;
-    let indent3 = indentation.L3;
-    let indent4 = indentation.L4;
-    let indent5 = indentation.L5;
-    let indent6 = indentation.L6;
 
-    let code = '';
-    code += `${indent}/* ${''.padStart(80, '-')} */\n`;
-    code += `${indent}/* ${`${this.hub.caption} Helper`.padEnd(80)} */\n`;
-    code += `${indent}/* ${''.padStart(80, '-')} */\n\n`;
+    const code = `
+/* -------------------------------------------------------------------------------- */
+/* ImportPreviewHub Helper                                                          */
+/* -------------------------------------------------------------------------------- */
 
-    code += `${indent}/**\n`;
-    code += `${indent} * connect to server\n`;
-    code += `${indent} */\n`;
-    code += `${indent}tryConnect(){\n\n`;
+/**
+ *  get or create the connection and wait until the socket is in state connected
+ */
+private async getConnection() {
+  /* already connected? */
+  if (this.checkAndUpdateConnectedState()) {
+    return this._connection;
+  }
+  if (this._connection.state === signalR.HubConnectionState.Disconnected ||
+    this._connection.state === signalR.HubConnectionState.Disconnecting) {
+    await this._connection.start();
+  }
 
-    code += `${indent2}if (this._connection.state === signalR.HubConnectionState.Connected) {\n`;
-    code += `${indent3}if (!this._connected$.value) this._connected$.next(true);\n`;
-    code += `${indent3}return;\n`;
-    code += `${indent2}}\n\n`;
+  const delay = 20;
+  const timeout = 1500;
+  let cnt = 0;
+  return await new Promise<signalR.HubConnection>((resolve, reject) => {
+    const waitInterval = setInterval(() => {
+      if (this.checkAndUpdateConnectedState()) {
+        clearInterval(waitInterval);
+        resolve(this._connection);
+      }
+      cnt++;
+      if (cnt * delay > timeout) {
+        this.checkAndUpdateConnectedState();
+        clearInterval(waitInterval);
+        reject("Connection timeout: " + timeout + "ms");
+      }
+    }, delay);
+  });
+}
 
-    code += `${indent2}if (this._connection.state === signalR.HubConnectionState.Connecting ||\n`;
-    code += `${indent2}    this._connection.state === signalR.HubConnectionState.Reconnecting) {\n`;
-    code += `${indent3}return;\n`;
-    code += `${indent2}}\n\n`;
+/** 
+ * Async Invoker Helper 
+ */
+private async InvokeAsync<T>(method: string, ...args: any[]) {
+  const connection = await this.getConnection();
+  console.log("InvokeAsync: " + method);
+  return await connection.invoke<T>(method, ...args);
+}
 
-    code += `${indent2}if (this._connected$.value) this._connected$.next(false);\n\n`;
+/** 
+ * return true if the socket is connected and updates the connected$ observable 
+ */
+private checkAndUpdateConnectedState() {
+  const connected = this._connection.state === signalR.HubConnectionState.Connected;
+  if (this._connected$.value !== connected) this._connected$.next(connected);
+  return connected;
+}
 
-    code += `${indent2}/* helper to wait for a connection */\n`;
-    code += `${indent2}const waitForConnection = () => {\n`;
-    code += `${indent3}setTimeout(() => {\n`;
-    code += `${indent4}if (this._connection && this._connection.state === signalR.HubConnectionState.Connected) {\n`;
-    code += `${indent5}this._connected$.next(true);\n`;
-    code += `${indent4}} else {\n`;
-    code += `${indent5} waitForConnection();\n`;
-    code += `${indent4}}\n`; // Close if connected
-    code += `${indent3}}, 50);\n`; // Close setTimeout
-    code += `${indent2}};\n\n`; // Close waitForConnection
-
-    code += `${indent2}/* connect */\n`;
-    code += `${indent2}try {\n`;
-    code += `${indent3}from(this._connection.start())\n`;
-    code += `${indent4}.subscribe(() => waitForConnection());\n`;
-    code += `${indent2}} catch (err) {\n`;
-    code += `${indent3}this._error$.next(err);\n`;
-    code += `${indent2}}\n`; // close catch
-    code += `${indent}}\n\n`; // Close tryConnect
-
-    // Invoke helper
-    code += `${indent}/**\n`;
-    code += `${indent} * Invoke helper (waits until a connection has been established)\n`;
-    code += `${indent} */\n`;
-    code += `${indent}private invoke<T>(method: string, ...args: any[]): Observable<T> {\n\n`;
-
-    code += `${indent2}/* helper to wait for a connection */\n`;
-    code += `${indent2}const call = () => {\n`;
-    code += `${indent3}if (this._connection) {\n`;
-    code += `${indent4}const pr = this._connection.invoke<T>(method, ...args);\n`;
-    code += `${indent4}return from(pr).pipe(\n`;
-    code += `${indent5}take(1),\n`;
-    code += `${indent5}// tap(m => this.onMessageReceived(method, m)),\n`;
-    code += `${indent5}catchError(err => {\n`;
-    code += `${indent6}this._error$.next(err);\n`;
-    code += `${indent6}return throwError(err);\n`;
-    code += `${indent5}})\n`; // Close catchError pipe
-    code += `${indent4});\n`; // close pipe
-    code += `${indent3}}\n\n`; // close if
-    code += `${indent3}this._error$.next('IMPORT SOCKET: Invoke Error (Invalid Hub Connection)');\n`;
-    code += `${indent3}throw new Error('invalid Hub Connection');\n`;
-    code += `${indent2}};\n\n`; // close call helper
-
-    code += `${indent2}/* Direct call when the connection is established */\n`;
-    code += `${indent2}if (this._connection.state === signalR.HubConnectionState.Connected) {\n`;
-    code += `${indent3}if (!this._connected$.value) this._connected$.next(true);\n`;
-    code += `${indent3}return call();\n`;
-    code += `${indent2}}\n\n`; // close if connected
-
-    code += `${indent2}/* Wait until the connection is established before calling up */\n`;
-    code += `${indent2}this.tryConnect();\n`;
-    code += `${indent2}return this._connected$.pipe(\n`;
-    code += `${indent3}filter(c => c),\n`;
-    code += `${indent3}take(1),\n`;
-    code += `${indent3}switchMap(() => call()),\n`;
-    code += `${indent3}catchError(err => {\n`;
-    code += `${indent4}this._error$.next(err);\n`;
-    code += `${indent4}return throwError(err);\n`;
-    code += `${indent3}})\n`; // Close catchError pipe
-    code += `${indent2});\n`; // close pipe
-    code += `${indent}}\n\n`; // Close invoker method
-
-    return code;
+/**
+ * Invoke helper (waits until a connection has been established)
+ */
+private invoke<T>(method: string, ...args: any[]): Observable<T> {
+  return from(this.InvokeAsync<T>(method, ...args));
+}
+`;
+    return code
+      .split('\n')
+      .map((l) => indent + l)
+      .join('\n');
   }
 
   async getServiceDirectory() {
