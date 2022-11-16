@@ -56,6 +56,11 @@ export function isComplex(flags) {
   return hasAnyFlag(flags, TypeFlags.IsComplex);
 }
 
+/** Returns true if the type is a complex type*/
+export function IsDictionary(flags) {
+  return hasAnyFlag(flags, TypeFlags.IsDictionary);
+}
+
 /** Returns true if the type is a void type*/
 export function isVoid(flags) {
   return hasAnyFlag(flags, TypeFlags.IsVoid);

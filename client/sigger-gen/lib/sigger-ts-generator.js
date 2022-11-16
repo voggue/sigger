@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { hasFlag, isComplexOrEnum, KeepValueMode, TypeFlags } from './sigger-enums.js';
+import { hasFlag, isComplexOrEnum, IsDictionary, KeepValueMode, TypeFlags } from './sigger-enums.js';
 import * as indentation from './sigger-utils.js';
 import { createTypeString, writeToFile } from './sigger-utils.js';
 
@@ -168,6 +168,15 @@ export class TsHubGeneration {
 
       if (isComplexOrEnum(type) && classDef.exportedName !== type.exportedType) {
         imports.push(type.exportedType);
+      } else if (IsDictionary(type)) {
+        // Handling for complex dictionary types (import is required)
+        if (type.dictionaryValue) {
+          if (isComplexOrEnum(type.dictionaryValue) && type.dictionaryValue.exportedName !== type.exportedType) {
+            imports.push(type.dictionaryValue.exportedType);
+          }
+        } else {
+          console.warn('Dictionary value is undefined', { classDef, prop, type });
+        }
       }
     }
     code += `}\n\n`;
