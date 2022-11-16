@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text.Json;
 using Sigger.Generator;
+using Sigger.Generator.Parser;
 using Sigger.Schema;
 using Sigger.Test.Parser;
 using Xunit;
@@ -80,6 +81,38 @@ public partial class GenerationCoreTests
         Assert.StrictEqual(1, parsed!.Hubs.Count);
         Assert.Single(parsed.Hubs[0].Methods!);
         Assert.StrictEqual(1, parsed.Hubs[0].Events!.Count);
+    }
+
+    [Fact]
+    public void ShouldGenerateEnumTypes()
+    {
+        var options = new SchemaGeneratorOptions();
+        var generator = new SchemaGenerator(options);
+        generator.AddHub(typeof(TestClasses.HubWithEnums), "/test");
+
+        var doc = generator.CreateSchema();
+        var json = doc.ToJson();
+        WriteLine(json);
+        var parsed = JsonSerializer.Deserialize<SchemaDocument>(json);
+        Assert.NotNull(parsed);
+        Assert.StrictEqual(1, parsed!.Hubs.Count);
+        Assert.Single(parsed.Hubs[0].Methods!);
+        Assert.Single(parsed.Hubs[0].Definitions!.ClassDefinitions!);
+
+        var type = parsed.Hubs[0].Definitions!.ClassDefinitions![0];
+        Assert.Equal(nameof(TestClasses.ClassWithEnums), type.ClrType!.Split('.').Last());
+
+
+        var properties = type.Properties!.ToDictionary(x => x.Caption ?? "");
+
+        var nonNullable = properties[nameof(TestClasses.ClassWithEnums.NonNullableEnum)];
+        var nullable = properties[nameof(TestClasses.ClassWithEnums.NullableEnum)];
+
+        Assert.Equal(nameof(UnitTestEnum), nonNullable.PropertyType?.ExportedType);
+        Assert.Equal(TypeFlags.IsEnum, (TypeFlags?)nonNullable.PropertyType?.FlagsValue);
+
+        Assert.Equal(nameof(UnitTestEnum), nullable.PropertyType?.ExportedType);
+        Assert.Equal(TypeFlags.IsEnum | TypeFlags.IsNullable, (TypeFlags?)nullable.PropertyType?.FlagsValue);
     }
 
     [Fact]

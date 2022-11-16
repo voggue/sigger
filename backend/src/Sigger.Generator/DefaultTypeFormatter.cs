@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Sigger.Generator.Parser;
+using Sigger.Generator.Utils;
 
 namespace Sigger.Generator;
 
@@ -153,9 +154,10 @@ internal class DefaultTypeFormatter : ITypeFormatter
             return $"{TypePrefix}{FirstLetterLowerCase(name)}{TypeSuffix}";
         }
 
-        if (type.ClrBaseType.IsEnum)
+        var baseType = Nullable.GetUnderlyingType(type.ClrBaseType) ?? type.ClrBaseType;
+        if (baseType.IsEnum)
         {
-            return GetFormattedName(options, type.ClrBaseType.Name, FormatKind.EnumName);
+            return GetFormattedName(options, baseType.Name, FormatKind.EnumName);
         }
 
         switch (kind)

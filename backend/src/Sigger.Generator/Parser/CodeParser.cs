@@ -178,7 +178,7 @@ public class CodeParser
         if (parent is not SrcClass srcClass) return;
         var propType = RegisterType(srcHub, pi.PropertyType, out var isValidType);
         if (!isValidType) return;
-
+        
         var prop = new SrcProperty(pi, propType);
         srcClass.TryAdd(prop);
     }

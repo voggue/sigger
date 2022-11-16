@@ -16,6 +16,14 @@ public partial class GenerationCoreTests
             Task OnHandleDataChanged(string text, int value);
         }
 
+        public class HubWithEnums : Hub
+        {
+            public Task ReceiveEnums(ClassWithEnums data)
+            {
+                return Task.CompletedTask;
+            }
+        }
+
         public class TestHub : Hub<IEventsDefinition>
         {
             public string Name { get; set; }
@@ -36,6 +44,15 @@ public partial class GenerationCoreTests
             }
         }
 
+        public class ClassWithEnums
+        {
+            public UnitTestEnum NonNullableEnum{ get; set; }
+            
+            public UnitTestEnum? NullableEnum{ get; set; }
+            
+            public int? NullableInt{ get; set; }
+        }
+        
         public interface IUnitReturnValue
         {
             public string Name { get; }
