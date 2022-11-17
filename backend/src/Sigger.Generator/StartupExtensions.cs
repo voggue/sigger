@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using Sigger.Generator.Server;
 
@@ -11,20 +12,25 @@ namespace Sigger.Generator;
 public static class StartupExtensions
 {
     public static IServiceCollection AddSigger(this IServiceCollection services,
-        Action<SiggerGenOptions>? configure = null)
+        Action<SiggerGenOptions>? configure = null,
+        Action<HubOptions>? configureHub = null)
     {
         var options = new SiggerGenOptions();
         configure?.Invoke(options);
         services.AddSingleton(options);
 
-        services.AddSignalR();
+        if (configureHub != null)
+            services.AddSignalR(configureHub);
+        else
+            services.AddSignalR();
         return services;
     }
 
     public static WebApplicationBuilder AddSigger(this WebApplicationBuilder builder,
-        Action<SiggerGenOptions>? configure = null)
+        Action<SiggerGenOptions>? configure = null,
+        Action<HubOptions>? configureHub = null)
     {
-        AddSigger(builder.Services, configure);
+        AddSigger(builder.Services, configure, configureHub);
         return builder;
     }
 
