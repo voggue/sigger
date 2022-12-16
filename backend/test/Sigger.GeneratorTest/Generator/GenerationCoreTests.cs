@@ -25,6 +25,37 @@ public partial class GenerationCoreTests
         WriteLine(doc.ToJson());
     }
 
+    [Fact]
+    public void ShouldGenerateInheritedHubMethodsAndEvents()
+    {
+        // should generate a hub without exception
+        var options = new SchemaGeneratorOptions();
+        var generator = new SchemaGenerator(options);
+        generator.AddHub(typeof(ChildUnitTestHub), "/test");
+
+        var doc = generator.CreateSchema();
+
+        var hub = doc.Hubs.FirstOrDefault();
+        Assert.NotNull(hub);
+
+        WriteLine("=== Methods ===");
+        foreach (var method in hub!.Methods!)
+            WriteLine("    " + method.ExportedName!);
+
+        WriteLine("=== Events ===");
+        foreach (var method in hub.Events!)
+            WriteLine("    " + method.ExportedName!);
+
+        Assert.Equal(2, hub!.Methods!.Count);
+        var methodNames = hub.Methods.Select(x => x.Name).ToArray();
+        Assert.Contains("MyGenericHubFunction", methodNames);
+        Assert.Contains("MyHubFunction", methodNames);
+
+        Assert.Equal(2, hub!.Events!.Count);
+        var eventNames = hub.Events.Select(x => x.Name).ToArray();
+        Assert.Contains("MyHubEvent", eventNames);
+        Assert.Contains("MyEventFromBase", eventNames);
+    }
 
     [Fact]
     public void ShouldGenerateEnums()

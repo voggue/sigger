@@ -17,7 +17,8 @@ public partial class ParserCoreTests : ParserTestsBase
         var options = new CodeParserOptions
         {
             // Default
-            BaseClassStrategy = BaseClassStrategy.ExtractSeperateTypes
+            BaseClassStrategy = BaseClassStrategy.ExtractSeperateTypes,
+            BaseClassStrategyForHub = BaseClassStrategy.IgnoreBaseType
         };
 
         var typeParser = new CodeParser(options);

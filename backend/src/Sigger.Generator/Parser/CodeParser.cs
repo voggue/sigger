@@ -37,7 +37,7 @@ public class CodeParser
         hub = new SrcHub(type, path);
         _parsedHubs.Add(type, hub);
 
-        ExtractTypeMembers(hub, hub, ExtractMembersFlags.Methods);
+        ExtractTypeMembers(hub, hub, ExtractMembersFlags.Methods | ExtractMembersFlags.Inherited);
 
         var hubBase = type.GetBaseType(typeof(Hub<>));
         if (hubBase == null) return hub;
@@ -95,6 +95,12 @@ public class CodeParser
             if (m.DeclaringType == typeof(object))
                 continue;
 
+            if (m.DeclaringType == typeof(Hub))
+                continue;
+
+            if (m.DeclaringType == typeof(Hub<>))
+                continue;
+
             if (m.DeclaringType != null && m.DeclaringType != parent.ClrType)
             {
                 switch (strategy)
@@ -137,7 +143,8 @@ public class CodeParser
 
     private void ExtractEvents(SrcHub srcHub, Type eventType)
     {
-        foreach (var mi in eventType.GetMethods())
+        var methods = eventType.GetMethods();
+        foreach (var mi in methods)
         {
             var returnType = RegisterType(srcHub, mi.ReturnType, out var isValidType);
             if (!isValidType) return;
@@ -155,13 +162,18 @@ public class CodeParser
 
             srcHub.Events.Add(srcMethod);
         }
+
+        if (_options.BaseClassStrategyForHub == BaseClassStrategy.IgnoreBaseType || !eventType.IsInterface) return;
+        foreach (var iType in eventType.GetInterfaces()) {
+            ExtractEvents(srcHub, iType);
+        }
     }
 
     private void HandleField(SrcHub srcHub, FieldInfo pi, SrcDefBase parent)
     {
         if (pi.GetCustomAttribute<JsonIgnoreAttribute>() != null)
             return;
-        
+
         if (parent is not SrcClass srcClass) return;
         var propType = RegisterType(srcHub, pi.FieldType, out var isValidType);
         if (!isValidType) return;
@@ -174,11 +186,11 @@ public class CodeParser
     {
         if (pi.GetCustomAttribute<JsonIgnoreAttribute>() != null)
             return;
-        
+
         if (parent is not SrcClass srcClass) return;
         var propType = RegisterType(srcHub, pi.PropertyType, out var isValidType);
         if (!isValidType) return;
-        
+
         var prop = new SrcProperty(pi, propType);
         srcClass.TryAdd(prop);
     }

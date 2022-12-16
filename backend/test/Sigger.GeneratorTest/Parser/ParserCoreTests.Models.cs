@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.SignalR;
 using Sigger.Test.Parser.SharedModels;
 
 namespace Sigger.Test.Parser;
@@ -105,4 +106,24 @@ public partial class ParserCoreTests
                 : Task.FromResult(count > 0 ? EnumOne.SecondEnumValue : defaultValue);
         }
     }
+}
+
+public class UnitTestBaseHub<T> : Hub<T> where T : class
+{
+    public Task<bool> MyGenericHubFunction() => throw new NotImplementedException();
+}
+
+public class ChildUnitTestHub : UnitTestBaseHub<IUnitTestEvents>
+{
+    public Task<bool> MyHubFunction() => throw new NotImplementedException();
+}
+
+public interface IUnitTestEvents : IUnitTestBaseEvents
+{
+    Task MyHubEvent();
+}
+
+public interface IUnitTestBaseEvents
+{
+    Task MyEventFromBase();
 }

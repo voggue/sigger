@@ -56,7 +56,7 @@ public class CodeParserOptions
     /// <summary>
     /// Defines the strategy for hubs with which inheritances are to be resolved.
     /// </summary>
-    public BaseClassStrategy BaseClassStrategyForHub { get; set; } = BaseClassStrategy.IgnoreOverloaded;
+    public BaseClassStrategy BaseClassStrategyForHub { get; set; } = BaseClassStrategy.MergeMembers;
 
     /// <summary>
     /// Defines the Default Keep-Value Mode for Events
