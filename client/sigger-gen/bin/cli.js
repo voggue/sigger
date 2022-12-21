@@ -21,6 +21,10 @@ const cli = meow(
         type: 'boolean',
         alias: 'v',
       },
+      rm: {
+        type: 'boolean',
+        alias: 'r',
+      },
       framework: {
         type: 'string',
         alias: 'f',

@@ -57,7 +57,7 @@ export function isComplex(flags) {
 }
 
 /** Returns true if the type is a complex type*/
-export function IsDictionary(flags) {
+export function isDictionary(flags) {
   return hasAnyFlag(flags, TypeFlags.IsDictionary);
 }
 

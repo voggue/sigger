@@ -102,7 +102,7 @@ internal class DefaultTypeFormatter : ITypeFormatter
 
     public string GetFormattedTypeName(SchemaGeneratorOptions options, SrcType type, TypeKind kind)
     {
-        if (type.Flags.HasFlag(TypeFlags.IsDictionary) && type.DictionaryKeyType != null && type.DictionaryValueType != null)
+        if (type.Flags.HasFlag(TypeFlags.IsDictionary) && type is { DictionaryKeyType: { }, DictionaryValueType: { } })
         {
             var key = GetFormattedTypeName(options, type.DictionaryKeyType, kind);
             var value = GetFormattedTypeName(options, type.DictionaryValueType, kind);

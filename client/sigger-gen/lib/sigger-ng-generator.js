@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { TsGeneration, TsHubGeneration } from './sigger-ts-generator.js';
-import { hasFlag, isArray, isComplexOrEnum, KeepValueMode, TypeFlags } from './sigger-enums.js';
+import { hasFlag, isArray, isComplexOrEnum, isDictionary, KeepValueMode, TypeFlags } from './sigger-enums.js';
 import * as indentation from './sigger-utils.js';
 import { getRootDirectory } from './sigger-utils.js';
 
@@ -10,12 +10,11 @@ export async function generate(definition, output, flags) {
   // await gen.generate();
 
   const rootDirectory = await getRootDirectory();
-
   const generator = new NgGeneration(rootDirectory, definition, output, flags);
 
   for (let hubIdx = 0; hubIdx < definition.hubs.length; hubIdx++) {
     const hub = definition.hubs[hubIdx];
-    generator.generate(hub);
+    await generator.generate(hub);
   }
 }
 
@@ -33,13 +32,29 @@ class NgHubGeneration extends TsHubGeneration {
     this.configParamsName = `${this.hub.exportedName}ConfigurationParams`;
   }
 
+  /** Delete all generated files */
+  async cleanup() {
+    const fullPath = path.resolve(path.join(this.rootDirectory, this.output, this.hub.exportedName));
+    if (!fs.existsSync(fullPath)) {
+      this.verbose('directory does not exist: ' + fullPath);
+      return;
+    }
+
+    try {
+      this.verbose('remove directory: ' + fullPath);
+      fs.rmSync(fullPath, { recursive: true });
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   /**
    * generate the index.ts file for the hub-module
    */
   async generateModuleIndex() {
     const dir = await this.getServiceDirectory();
     const file = `index.ts`;
-
+    this.verbose('generate index file: ' + file);
     let code = '';
 
     code += `export * from './${this.hub.exportedName}.configuration';\n`;
@@ -56,6 +71,7 @@ class NgHubGeneration extends TsHubGeneration {
   async generateService() {
     const dir = await this.getServiceDirectory();
     const file = `${this.hub.exportedName}.service.ts`;
+    this.verbose('generate angular service: ' + file);
     var code = this.generateServiceCode();
     this.writeToFile(dir, file, code);
   }
@@ -66,6 +82,7 @@ class NgHubGeneration extends TsHubGeneration {
   async generateModuleHubConfig() {
     const dir = await this.getServiceDirectory();
     const file = `${this.hub.exportedName}.configuration.ts`;
+    this.verbose('generate angular configuration: ' + file);
     var code = this.generateConfigCode();
     this.writeToFile(dir, file, code);
   }
@@ -76,6 +93,7 @@ class NgHubGeneration extends TsHubGeneration {
   async generateModule() {
     const dir = await this.getServiceDirectory();
     const file = `${this.hub.exportedName}.module.ts`;
+    this.verbose('generate angular module: ' + file);
     var code = this.generateModuleCode();
     this.writeToFile(dir, file, code);
   }
@@ -386,6 +404,14 @@ class NgHubGeneration extends TsHubGeneration {
   _getTypeDeclaration(typeDefinition) {
     let type = typeDefinition.exportedType;
 
+    if (isDictionary(typeDefinition) && typeDefinition.dictionaryKey && typeDefinition.dictionaryValue) {
+      let keyType = typeDefinition.dictionaryKey.exportedType;
+      let valueType = typeDefinition.dictionaryValue.exportedType;
+      if (isComplexOrEnum(typeDefinition.dictionaryKey)) keyType = 'models.' + keyType;
+      if (isComplexOrEnum(typeDefinition.dictionaryValue)) valueType = 'models.' + valueType;
+      return `{ [key: ${keyType}]: ${valueType} }`;
+    }
+
     if (isArray(typeDefinition) && isComplexOrEnum(typeDefinition.arrayElement)) {
       type = 'models.' + type;
     } else if (isComplexOrEnum(typeDefinition)) {
@@ -476,9 +502,7 @@ private invoke<T>(method: string, ...args: any[]): Observable<T> {
     const fullPath = path.resolve(path.join(this.rootDirectory, this.output, this.hub.exportedName));
     const exists = fs.existsSync(fullPath);
     if (!exists) {
-      if (this.flags.verbose) {
-        console.log('Create directory: ' + fullPath);
-      }
+      this.verbose('create directory: ' + fullPath);
       const result = await fs.promises.mkdir(fullPath, { recursive: true });
       if (this.flags.verbose) console.log('Path created', fullPath);
     }
@@ -495,6 +519,10 @@ class NgGeneration extends TsGeneration {
     const hubGenerator = new NgHubGeneration(this, hub);
 
     try {
+      if (this.flags.rm) {
+        await hubGenerator.cleanup();
+      }
+
       if (hubGenerator.hasModels) {
         await hubGenerator.generateModels();
         await hubGenerator.generateEnums();
@@ -506,15 +534,9 @@ class NgGeneration extends TsGeneration {
       await hubGenerator.generateService();
 
       await hubGenerator.generateModuleIndex();
+      hubGenerator.verbose('generation completed');
     } catch (err) {
-      console.error('ERROR Generation details:', {
-        rootDirectory: this.rootDirectory,
-        definition: this.definition,
-        output: this.output,
-        flags: this.flags,
-        hub,
-        err,
-      });
+      hubGenerator.error('generation failed', this.rootDirectory, this.output, err);
     }
   }
 }

@@ -10,7 +10,7 @@
       "name": "Start Sigger",
       "skipFiles": ["<node_internals>/**"],
       "program": "${workspaceFolder}\\bin\\cli",
-      "args": ["https://localhost:7178/sigger/sigger.json", "./test/hubs", "-v"]
+      "args": ["https://localhost:5005/sigger/sigger.json", "./test/hubs", "-v", "-r"]
     }
   ]
 }

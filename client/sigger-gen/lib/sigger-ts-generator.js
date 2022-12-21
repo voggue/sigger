@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { hasFlag, isComplexOrEnum, IsDictionary, KeepValueMode, TypeFlags } from './sigger-enums.js';
+import { hasFlag, isComplexOrEnum, isDictionary, KeepValueMode, TypeFlags } from './sigger-enums.js';
 import * as indentation from './sigger-utils.js';
 import { createTypeString, writeToFile } from './sigger-utils.js';
 
@@ -31,9 +31,7 @@ export class TsHubGeneration {
     const fullPath = path.resolve(path.join(this.rootDirectory, this.output, hub.exportedName, 'models'));
     const exists = fs.existsSync(fullPath);
     if (!exists) {
-      if (this.flags.verbose) {
-        console.log('Create directory: ' + fullPath + '...');
-      }
+      this.verbose('create directory: ' + fullPath + '...');
       await fs.promises.mkdir(fullPath, { recursive: true });
     }
     return fullPath;
@@ -79,7 +77,7 @@ export class TsHubGeneration {
     }
 
     const dir = await this.getModelsDirectory(hub);
-    this.verbose('generate angular models for hub ' + hub.exportedName + '...');
+    this.verbose('generate angular enums for hub ' + hub.exportedName + '...');
     for (let typeIdx = 0; typeIdx < types.length; typeIdx++) {
       const type = types[typeIdx];
 
@@ -168,7 +166,7 @@ export class TsHubGeneration {
 
       if (isComplexOrEnum(type) && classDef.exportedName !== type.exportedType) {
         imports.push(type.exportedType);
-      } else if (IsDictionary(type)) {
+      } else if (isDictionary(type)) {
         // Handling for complex dictionary types (import is required)
         if (type.dictionaryValue) {
           if (isComplexOrEnum(type.dictionaryValue) && type.dictionaryValue.exportedName !== type.exportedType) {
@@ -198,7 +196,13 @@ export class TsHubGeneration {
 
   verbose(message, ...optionalParams) {
     if (this.flags.verbose) {
-      console.log(message, optionalParams);
+      if (optionalParams.length) console.log(this.hub.exportedName + ' | verbose | ' + message, optionalParams);
+      else console.log(this.hub.exportedName + ' | verbose | ' + message);
     }
+  }
+
+  error(message, ...optionalParams) {
+    if (optionalParams.length) console.error(this.hub.exportedName + ' | error | ' + message, optionalParams);
+    else console.error(this.hub.exportedName + ' | error | ' + message);
   }
 }
