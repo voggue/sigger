@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { TsGeneration, TsHubGeneration } from './sigger-ts-generator.js';
-import { hasFlag, isArray, isComplexOrEnum, isDictionary, KeepValueMode, TypeFlags } from './sigger-enums.js';
+import { hasFlag, isArray, isComplexOrEnum, isDictionary, isNullable, KeepValueMode, TypeFlags } from './sigger-enums.js';
 import * as indentation from './sigger-utils.js';
 import { getRootDirectory } from './sigger-utils.js';
 
@@ -409,6 +409,11 @@ class NgHubGeneration extends TsHubGeneration {
       let valueType = typeDefinition.dictionaryValue.exportedType;
       if (isComplexOrEnum(typeDefinition.dictionaryKey)) keyType = 'models.' + keyType;
       if (isComplexOrEnum(typeDefinition.dictionaryValue)) valueType = 'models.' + valueType;
+
+      if (isNullable(typeDefinition.flagsValue)) {
+        return `{ [key: ${keyType}]: ${valueType} } | null`;
+      }
+
       return `{ [key: ${keyType}]: ${valueType} }`;
     }
 
