@@ -9,6 +9,7 @@ public enum TypeFlags
     IsByRef = 0x00004,
     IsTask = 0x00008,
     IsDictionary = 0x00010,
+    IsException = 0x00020,
     IsNullable = 0x00100,
     IsNumber = 0x00200,
     IsString = 0x00400,
@@ -21,5 +22,4 @@ public enum TypeFlags
     IsVoid = 0x20000,
     IsParameter = 0x40000,
     IsReturn = 0x80000,
-    
 }

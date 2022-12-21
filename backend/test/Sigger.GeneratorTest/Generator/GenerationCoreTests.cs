@@ -37,14 +37,7 @@ public partial class GenerationCoreTests
 
         var hub = doc.Hubs.FirstOrDefault();
         Assert.NotNull(hub);
-
-        WriteLine("=== Methods ===");
-        foreach (var method in hub!.Methods!)
-            WriteLine("    " + method.ExportedName!);
-
-        WriteLine("=== Events ===");
-        foreach (var method in hub.Events!)
-            WriteLine("    " + method.ExportedName!);
+        DumpHubdata(hub!);
 
         Assert.Equal(2, hub!.Methods!.Count);
         var methodNames = hub.Methods.Select(x => x.Name).ToArray();
@@ -55,6 +48,28 @@ public partial class GenerationCoreTests
         var eventNames = hub.Events.Select(x => x.Name).ToArray();
         Assert.Contains("MyHubEvent", eventNames);
         Assert.Contains("MyEventFromBase", eventNames);
+    }
+
+    private void DumpHubdata(HubDefinition hub)
+    {
+        WriteLine("=== Types ===");
+        if (hub.Definitions?.ClassDefinitions != null)
+            foreach (var clazz in hub.Definitions!.ClassDefinitions!)
+                WriteLine("    " + clazz.ExportedName!);
+
+        if (hub.Definitions?.EnumDefinitions != null)
+            foreach (var enumDef in hub.Definitions!.EnumDefinitions!)
+                WriteLine("    " + enumDef.ExportedName!);
+
+        WriteLine("=== Methods ===");
+        if (hub.Methods != null)
+            foreach (var method in hub.Methods!)
+                WriteLine("    " + method.ExportedName!);
+
+        WriteLine("=== Events ===");
+        if (hub.Events != null)
+            foreach (var method in hub.Events!)
+                WriteLine("    " + method.ExportedName!);
     }
 
     [Fact]
@@ -129,6 +144,8 @@ public partial class GenerationCoreTests
         Assert.StrictEqual(1, parsed!.Hubs.Count);
         Assert.Single(parsed.Hubs[0].Methods!);
         Assert.Single(parsed.Hubs[0].Definitions!.ClassDefinitions!);
+
+        DumpHubdata(parsed.Hubs[0]);
 
         var type = parsed.Hubs[0].Definitions!.ClassDefinitions![0];
         Assert.Equal(nameof(TestClasses.ClassWithEnums), type.ClrType!.Split('.').Last());

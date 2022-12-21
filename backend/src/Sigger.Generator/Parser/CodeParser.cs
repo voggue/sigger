@@ -95,6 +95,9 @@ public class CodeParser
             if (m.DeclaringType == typeof(object))
                 continue;
 
+            var ignored = m.GetCustomAttribute<SiggerIgnoreAttribute>();
+            if(ignored != null) continue;
+            
             if (m.DeclaringType == typeof(Hub))
                 continue;
 
@@ -146,6 +149,9 @@ public class CodeParser
         var methods = eventType.GetMethods();
         foreach (var mi in methods)
         {
+            var ignored = mi.GetCustomAttribute<SiggerIgnoreAttribute>();
+            if(ignored != null) continue;
+            
             var returnType = RegisterType(srcHub, mi.ReturnType, out var isValidType);
             if (!isValidType) return;
 
@@ -241,6 +247,13 @@ public class CodeParser
     {
         while (true)
         {
+            if (typeof(Exception).IsAssignableFrom(type))
+            {
+                srcType.Flags |= TypeFlags.IsException;
+                srcType.ExportedType = typeof(string);
+                return true;
+            }
+            
             if (type == typeof(void))
             {
                 srcType.Flags |= TypeFlags.IsVoid;
