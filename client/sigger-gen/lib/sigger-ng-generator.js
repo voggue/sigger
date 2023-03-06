@@ -12,6 +12,8 @@ export async function generate(definition, output, flags) {
   const rootDirectory = await getRootDirectory();
   const generator = new NgGeneration(rootDirectory, definition, output, flags);
 
+  await generator.generateGlobal();
+
   for (let hubIdx = 0; hubIdx < definition.hubs.length; hubIdx++) {
     const hub = definition.hubs[hubIdx];
     await generator.generate(hub);
@@ -29,7 +31,6 @@ class NgHubGeneration extends TsHubGeneration {
 
     this.moduleName = `${this.hub.exportedName}Module`;
     this.configName = `${this.hub.exportedName}Configuration`;
-    this.configParamsName = `${this.hub.exportedName}ConfigurationParams`;
   }
 
   /** Delete all generated files */
@@ -107,7 +108,8 @@ class NgHubGeneration extends TsHubGeneration {
 
     let code = '';
 
-    code += `import { ${this.configName}, ${this.configParamsName} } from './${this.hub.exportedName}.configuration';\n`;
+    code += `import { ${this.configName} } from './${this.hub.exportedName}.configuration';\n`;
+    code += `import { ${this.generation.configParamsName} } from '../${this.generation.configParamsFile}';\n`;
     code += `import { ModuleWithProviders, NgModule } from '@angular/core';\n`;
 
     code += '\n';
@@ -115,7 +117,7 @@ class NgHubGeneration extends TsHubGeneration {
     code += `})\n`;
     code += `export class ${this.moduleName} {\n\n`;
 
-    code += `${indent1}static forRoot(params: ${this.configParamsName}): ModuleWithProviders<${this.moduleName}> {\n`;
+    code += `${indent1}static forRoot(params: ${this.generation.configParamsName}): ModuleWithProviders<${this.moduleName}> {\n`;
     code += `${indent2}return {\n`;
     code += `${indent3}ngModule: ${this.moduleName},\n`;
     code += `${indent3}providers: [\n`;
@@ -134,51 +136,38 @@ class NgHubGeneration extends TsHubGeneration {
     let indent = indentation.L1;
     let code = '';
     code += `import { Injectable } from '@angular/core';\n`;
-    code += `import { HttpTransportType, ITransport } from '@microsoft/signalr';\n\n`;
+    code += `import { ${this.generation.configParamsName} } from '../${this.generation.configParamsFile}';\n`;
+    code += `import { IHttpConnectionOptions } from '@microsoft/signalr';\n\n`;
 
     code += `@Injectable({ providedIn: 'root' })\n`;
-    code += `export class ${this.configName} {\n`;
+    code += `export class ${this.configName} {\n\n`;
+
+    code += `${indent}/**Default Url of ${this.hub.exportedName} endpoint; */\n`;
+    code += `${indent}defaultHubPath = '${this.hub.path}';\n\n`;
+
+    code += `${indent}/**Configured Url of ${this.hub.exportedName} endpoint; */\n`;
+    code += `${indent}hubPath?: string;\n\n`;
+
     code += `${indent}/** Url of ${this.hub.exportedName} endpoint; */\n`;
-    code += `${indent}siggerUrl: string = '';\n\n`;
+    code += `${indent}siggerUrl = '';\n\n`;
 
     code += `${indent}/** Negotiation can only be skipped when the IHttpConnectionOptions.transport property is set to 'HttpTransportType.WebSockets'.; */\n`;
-    code += `${indent}skipNegotiation?: boolean = false;\n\n`;
-
-    code += `${indent}/** An HttpTransportType value specifying the transport to use for the connection. */\n`;
-    code += `${indent}transport?: HttpTransportType | ITransport = HttpTransportType.WebSockets;\n\n`;
-
-    code += `${indent}/** \n`;
-    code += `${indent} * Default value is 'true'.\n`;
-    code += `${indent} * This controls whether credentials such as cookies are sent in cross-site requests.\n`;
-    code += `${indent} */\n`;
-    code += `${indent}withCredentials?: boolean;\n\n`;
+    code += `${indent}connectionConfig: IHttpConnectionOptions = {};\n\n`;
 
     code += `${indent}/** Connect to server on startup. */\n`;
     code += `${indent}autoConnect?: boolean = true;\n`;
 
     code += `}\n\n`;
 
-    code += `/** Configuration of ${this.hub.exportedName}; */\n`;
-    code += `export interface ${this.configParamsName} {\n`;
-    code += `${indent}/** Url of ${this.hub.exportedName} endpoint; */\n`;
-    code += `${indent}siggerUrl: string;\n\n`;
+    code += `export function ${this.configName}Factory(params: ${this.generation.configParamsName}) {\n\n`;
+    code += `${indent}const config = new ${this.configName}();\n`;
+    code += `${indent}if(params.siggerUrl) config.siggerUrl = params.siggerUrl;\n`;
+    code += `${indent}if(params.hubPath) config.hubPath = params.hubPath;\n`;
+    code += `${indent}if(params.connectionConfig) config.connectionConfig = params.connectionConfig ?? {};\n`;
+    code += `${indent}config.autoConnect = params.autoConnect;\n`;
+    code += `${indent}return config;\n`;
+    code += `}\n\n`;
 
-    code += `${indent}/** Negotiation can only be skipped when the IHttpConnectionOptions.transport property is set to 'HttpTransportType.WebSockets'.; */\n`;
-    code += `${indent}skipNegotiation?: boolean;\n\n`;
-
-    code += `${indent}/** An HttpTransportType value specifying the transport to use for the connection. */\n`;
-    code += `${indent}transport?: HttpTransportType | ITransport;\n\n`;
-
-    code += `${indent}/** \n`;
-    code += `${indent} * Default value is 'true'.\n`;
-    code += `${indent} * This controls whether credentials such as cookies are sent in cross-site requests.\n`;
-    code += `${indent} */\n`;
-    code += `${indent}withCredentials?: boolean;\n\n`;
-
-    code += `${indent}/** Connect to server on startup. */\n`;
-    code += `${indent}autoConnect?: boolean;\n`;
-
-    code += `}\n`;
     return code;
   }
 
@@ -294,6 +283,7 @@ class NgHubGeneration extends TsHubGeneration {
     let indent = indentation.L1;
     let indent2 = indentation.L2;
     let indent3 = indentation.L3;
+    let indent4 = indentation.L4;
 
     let code = '';
     code += `${indent}/* ${''.padStart(80, '-')} */\n`;
@@ -305,14 +295,12 @@ class NgHubGeneration extends TsHubGeneration {
     code += `${indent2}private _config: ${this.configName}\n`;
     code += `${indent}){\n\n`;
 
-    code += `${indent2}const signalrOptions: signalR.IHttpConnectionOptions = {\n`;
-    code += `${indent3}skipNegotiation: _config.skipNegotiation,\n`;
-    code += `${indent3}transport: _config.transport,\n`;
-    code += `${indent3}withCredentials: _config.withCredentials\n`;
-    code += `${indent2}};\n\n`;
+    code += `${indent2}/** Full Url and Path of SignalR Endpoint */\n`;
+    code += `${indent2}const fullUrl = (this._config.siggerUrl?.replace(/\\\/+$/, '') ?? '') + '/' +\n`;
+    code += `${indent4}((this._config.hubPath ?? this._config.defaultHubPath)?.replace(/^\\\/+/, '') ?? '');\n\n`;
 
     code += `${indent2}this._connection = new signalR.HubConnectionBuilder()\n`;
-    code += `${indent3}.withUrl(this._config.siggerUrl, signalrOptions)\n`;
+    code += `${indent3}.withUrl(fullUrl, this._config.connectionConfig)\n`;
     code += `${indent3}.withAutomaticReconnect()\n`;
     code += `${indent3}// .configureLogging(signalR.LogLevel.Trace) /* for debug traces */\n`;
     code += `${indent3}.build();\n\n`;
@@ -518,6 +506,17 @@ private invoke<T>(method: string, ...args: any[]): Observable<T> {
 class NgGeneration extends TsGeneration {
   constructor(rootDirectory, definition, output, flags) {
     super(rootDirectory, definition, output, flags);
+
+    this.configParamsName = `SiggerConfigurationParams`;
+    this.configParamsFile = `sigger.config`;
+  }
+
+  async generateGlobal() {
+    const dir = await this.getServiceDirectory();
+    this.verbose('generate angular configuration: ' + this.configParamsFile);
+
+    const code = this.generateConfigParamsCode();
+    this.writeToFile(dir, `${this.configParamsFile}.ts`, code);
   }
 
   async generate(hub) {
@@ -543,5 +542,41 @@ class NgGeneration extends TsGeneration {
     } catch (err) {
       hubGenerator.error('generation failed', this.rootDirectory, this.output, err);
     }
+  }
+
+  async getServiceDirectory() {
+    if (this.flags.test) return '';
+
+    const fullPath = path.resolve(path.join(this.rootDirectory, this.output));
+    const exists = fs.existsSync(fullPath);
+    if (!exists) {
+      this.verbose('create directory: ' + fullPath);
+      const result = await fs.promises.mkdir(fullPath, { recursive: true });
+      if (this.flags.verbose) console.log('Path created', fullPath);
+    }
+    return fullPath;
+  }
+
+  generateConfigParamsCode() {
+    let indent = indentation.L1;
+    let code = '';
+    code += `import { IHttpConnectionOptions } from '@microsoft/signalr';\n\n`;
+
+    code += `/** Sigger Configuration */\n`;
+    code += `export interface ${this.configParamsName} {\n`;
+    code += `${indent}/**Root Url of SignalR endpoint; */\n`;
+    code += `${indent}siggerUrl: string;\n\n`;
+
+    code += `${indent}/**Path of SignalR endpoint; */\n`;
+    code += `${indent}hubPath?: string;\n\n`;
+
+    code += `${indent}/** Connect to server on startup. */\n`;
+    code += `${indent}autoConnect?: boolean;\n`;
+
+    code += `${indent}/** Url of Sigger endpoint; */\n`;
+    code += `${indent}connectionConfig: IHttpConnectionOptions;\n\n`;
+
+    code += `}\n`;
+    return code;
   }
 }

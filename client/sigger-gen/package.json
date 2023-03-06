@@ -1,12 +1,14 @@
 {
   "name": "sigger-gen",
-  "version": "1.1.1",
+  "version": "1.2.1",
   "type": "module",
   "description": "Generates stubs für sigger hub definition (SignalR definition language)",
   "main": "index.js",
   "scripts": {
     "test": "test.js",
-    "sigger": "sigger-gen https://localhost:5005/sigger/sigger.json ./src/hubs -v -f angular"
+    "cleanup": "rimraf ./src/hubs",
+    "generate": "sigger-gen https://localhost:5005/sigger/sigger.json ./src/hubs -v -f angular",
+    "sigger": "npm run cleanup&npm run generate"
   },
   "bin": {
     "sigger-gen": "./bin/cli.js"
@@ -22,6 +24,7 @@
   "dependencies": {
     "find-up": "^6.3.0",
     "meow": "^11.0.0",
-    "node-fetch": "^3.3.0"
+    "node-fetch": "^3.3.0",
+    "rimraf": "^4.3.0"
   }
 }

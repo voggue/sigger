@@ -4,8 +4,32 @@ import { hasFlag, isComplexOrEnum, isDictionary, KeepValueMode, TypeFlags } from
 import * as indentation from './sigger-utils.js';
 import { createTypeString, writeToFile } from './sigger-utils.js';
 
-export class TsGeneration {
+export class TsGenerationBase {
+  verbose(message, ...optionalParams) {
+    if (this.flags.verbose) {
+      if (optionalParams.length) console.log('NgGeneration | verbose | ' + message, optionalParams);
+      else console.log('NgGeneration | verbose | ' + message);
+    }
+  }
+
+  error(message, ...optionalParams) {
+    if (optionalParams.length) console.error('NgGeneration | error | ' + message, optionalParams);
+    else console.error('NgGeneration | error | ' + message);
+  }
+
+  writeToFile(dir, file, data) {
+    if (this.flags.test) {
+      console.log(def);
+      return;
+    }
+
+    writeToFile(dir, file, data);
+  }
+}
+
+export class TsGeneration extends TsGenerationBase {
   constructor(rootDirectory, definition, output, flags) {
+    super()
     this.rootDirectory = rootDirectory;
     this.definition = definition;
     this.output = output;
@@ -13,8 +37,9 @@ export class TsGeneration {
   }
 }
 
-export class TsHubGeneration {
+export class TsHubGeneration extends TsGenerationBase {
   constructor(tsGeneration, hub) {
+    super();
     this.hub = hub;
     this.generation = tsGeneration;
     this.flags = tsGeneration.flags;
@@ -86,15 +111,6 @@ export class TsHubGeneration {
       this.writeToFile(dir, `${type.exportedName}.ts`, def + '\n\n' + catalog);
       this.generatedModels.push(type.exportedName);
     }
-  }
-
-  writeToFile(dir, file, data) {
-    if (this.flags.test) {
-      console.log(def);
-      return;
-    }
-
-    writeToFile(dir, file, data);
   }
 
   createTypeEnumDefinition(enumDef) {
