@@ -11,7 +11,7 @@ namespace Sigger.Generator;
 
 public static class StartupExtensions
 {
-    public static IServiceCollection AddSigger(this IServiceCollection services,
+    public static ISignalRServerBuilder AddSigger(this IServiceCollection services,
         Action<SiggerGenOptions>? configure = null,
         Action<HubOptions>? configureHub = null)
     {
@@ -19,11 +19,7 @@ public static class StartupExtensions
         configure?.Invoke(options);
         services.AddSingleton(options);
 
-        if (configureHub != null)
-            services.AddSignalR(configureHub);
-        else
-            services.AddSignalR();
-        return services;
+        return configureHub != null ? services.AddSignalR(configureHub) : services.AddSignalR();
     }
 
     public static WebApplicationBuilder AddSigger(this WebApplicationBuilder builder,
