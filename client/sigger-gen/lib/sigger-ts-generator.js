@@ -126,6 +126,19 @@ export class TsHubGeneration extends TsGenerationBase {
       code += `${indent}${prop.exportedName} = ${prop.value}${itemIdx == enumDef.items.length - 1 ? '' : ','}${EOL}`;
     }
     code += `}${EOL}${EOL}`;
+
+    // String-Values export
+    code += `/** ${enumDef.caption} */${EOL}`;
+    code += `/** generated from .net Type ${enumDef.dotnetType} */${EOL}`;
+    code += `export enum ${enumDef.exportedName}Strings {${EOL}`;
+    for (let itemIdx = 0; itemIdx < enumDef.items.length; itemIdx++) {
+      const prop = enumDef.items[itemIdx];
+      code += `${EOL}`;
+      code += `${indent}/** ${prop.caption} */${EOL}`;
+      code += `${indent}${prop.exportedName} = '${prop.valueText}'${itemIdx == enumDef.items.length - 1 ? '' : ','}${EOL}`;
+    }
+    code += `}${EOL}${EOL}`;
+
     return code;
   }
 
@@ -144,6 +157,7 @@ export class TsHubGeneration extends TsGenerationBase {
       code += `${indent}caption: "${prop.caption}",${EOL}`;
       if (prop.description) code += `${indent}description: "${prop.description}",${EOL}`;
       code += `${indent}value: ${enumDef.exportedName}.${prop.exportedName},${EOL}`;
+      code += `${indent}textValue: '${prop.valueText}',${EOL}`;
       code += `${indent}intValue: ${prop.value}${EOL}`;
       indent = indentation.L1;
       code += `${indent}}${itemIdx == enumDef.items.length - 1 ? '' : ','}${EOL}`;
