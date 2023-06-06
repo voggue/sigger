@@ -4,6 +4,7 @@ import { TsGeneration, TsHubGeneration } from './sigger-ts-generator.js';
 import { hasFlag, isArray, isComplexOrEnum, isDictionary, isNullable, KeepValueMode, TypeFlags } from './sigger-enums.js';
 import * as indentation from './sigger-utils.js';
 import { getRootDirectory } from './sigger-utils.js';
+import { EOL } from 'node:os';
 
 export async function generate(definition, output, flags) {
   // const gen = new TsGeneration(definition, output, flags);
@@ -58,10 +59,10 @@ class NgHubGeneration extends TsHubGeneration {
     this.verbose('generate index file: ' + file);
     let code = '';
 
-    code += `export * from './${this.hub.exportedName}.configuration';\n`;
-    code += `export * from './${this.hub.exportedName}.module';\n`;
-    code += `export * from './${this.hub.exportedName}.service';\n`;
-    if (this.hasModels) code += `export * as models from './models';\n`;
+    code += `export * from './${this.hub.exportedName}.configuration';${EOL}`;
+    code += `export * from './${this.hub.exportedName}.module';${EOL}`;
+    code += `export * from './${this.hub.exportedName}.service';${EOL}`;
+    if (this.hasModels) code += `export * as models from './models';${EOL}`;
 
     this.writeToFile(dir, file, code);
   }
@@ -108,65 +109,65 @@ class NgHubGeneration extends TsHubGeneration {
 
     let code = '';
 
-    code += `import { ${this.configName} } from './${this.hub.exportedName}.configuration';\n`;
-    code += `import { ${this.generation.configParamsName} } from '../${this.generation.configParamsFile}';\n`;
-    code += `import { ModuleWithProviders, NgModule } from '@angular/core';\n`;
+    code += `import { ${this.configName} } from './${this.hub.exportedName}.configuration';${EOL}`;
+    code += `import { ${this.generation.configParamsName} } from '../${this.generation.configParamsFile}';${EOL}`;
+    code += `import { ModuleWithProviders, NgModule } from '@angular/core';${EOL}`;
 
-    code += '\n';
-    code += `@NgModule({\n`;
-    code += `})\n`;
-    code += `export class ${this.moduleName} {\n\n`;
+    code += EOL;
+    code += `@NgModule({${EOL}`;
+    code += `})${EOL}`;
+    code += `export class ${this.moduleName} {${EOL}${EOL}`;
 
-    code += `${indent1}static forRoot(params: ${this.generation.configParamsName}): ModuleWithProviders<${this.moduleName}> {\n`;
-    code += `${indent2}return {\n`;
-    code += `${indent3}ngModule: ${this.moduleName},\n`;
-    code += `${indent3}providers: [\n`;
-    code += `${indent4}{\n`;
-    code += `${indent5}provide: ${this.configName},\n`;
-    code += `${indent5}useValue: params\n`;
-    code += `${indent4}}\n`; // close config provider object
-    code += `${indent3}]\n`; // close provider array
-    code += `${indent2}}\n`; // close return
-    code += `${indent1}}\n`; // close forRoot
-    code += `}\n`; // Close module
+    code += `${indent1}static forRoot(params: ${this.generation.configParamsName}): ModuleWithProviders<${this.moduleName}> {${EOL}`;
+    code += `${indent2}return {${EOL}`;
+    code += `${indent3}ngModule: ${this.moduleName},${EOL}`;
+    code += `${indent3}providers: [${EOL}`;
+    code += `${indent4}{${EOL}`;
+    code += `${indent5}provide: ${this.configName},${EOL}`;
+    code += `${indent5}useValue: params${EOL}`;
+    code += `${indent4}}${EOL}`; // close config provider object
+    code += `${indent3}]${EOL}`; // close provider array
+    code += `${indent2}}${EOL}`; // close return
+    code += `${indent1}}${EOL}`; // close forRoot
+    code += `}${EOL}`; // Close module
     return code;
   }
 
   generateConfigCode() {
     let indent = indentation.L1;
     let code = '';
-    code += `import { Injectable } from '@angular/core';\n`;
-    code += `import { ${this.generation.configParamsName} } from '../${this.generation.configParamsFile}';\n`;
-    code += `import { IHttpConnectionOptions } from '@microsoft/signalr';\n\n`;
+    code += `import { Injectable } from '@angular/core';${EOL}`;
+    code += `import { ${this.generation.configParamsName} } from '../${this.generation.configParamsFile}';${EOL}`;
+    code += `import { IHttpConnectionOptions } from '@microsoft/signalr';${EOL}${EOL}`;
 
-    code += `@Injectable({ providedIn: 'root' })\n`;
-    code += `export class ${this.configName} {\n\n`;
+    code += `@Injectable({ providedIn: 'root' })${EOL}`;
+    code += `export class ${this.configName} {${EOL}${EOL}`;
 
-    code += `${indent}/**Default Url of ${this.hub.exportedName} endpoint; */\n`;
-    code += `${indent}defaultHubPath = '${this.hub.path}';\n\n`;
+    code += `${indent}/**Default Url of ${this.hub.exportedName} endpoint; */${EOL}`;
+    code += `${indent}defaultHubPath = '${this.hub.path}';${EOL}${EOL}`;
 
-    code += `${indent}/**Configured Url of ${this.hub.exportedName} endpoint; */\n`;
-    code += `${indent}hubPath?: string;\n\n`;
+    code += `${indent}/**Configured Url of ${this.hub.exportedName} endpoint; */${EOL}`;
+    code += `${indent}hubPath?: string;${EOL}${EOL}`;
 
-    code += `${indent}/** Url of ${this.hub.exportedName} endpoint; */\n`;
-    code += `${indent}siggerUrl = '';\n\n`;
+    code += `${indent}/** Url of ${this.hub.exportedName} endpoint; */${EOL}`;
+    code += `${indent}siggerUrl = '';${EOL}${EOL}`;
 
-    code += `${indent}/** Negotiation can only be skipped when the IHttpConnectionOptions.transport property is set to 'HttpTransportType.WebSockets'.; */\n`;
-    code += `${indent}connectionConfig: IHttpConnectionOptions = {};\n\n`;
+    code += `${indent}/** Negotiation can only be skipped when the IHttpConnectionOptions.transport property is set to 'HttpTransportType.WebSockets'.; */${EOL}`;
+    code += `${indent}connectionConfig: IHttpConnectionOptions = {};${EOL}${EOL}`;
 
-    code += `${indent}/** Connect to server on startup. */\n`;
-    code += `${indent}autoConnect?: boolean = true;\n`;
+    code += `${indent}/** Connect to server on startup. */${EOL}`;
+    code += `${indent}autoConnect?: boolean = true;${EOL}`;
 
-    code += `}\n\n`;
+    code += `}${EOL}${EOL}`;
 
-    code += `export function ${this.configName}Factory(params: ${this.generation.configParamsName}) {\n\n`;
-    code += `${indent}const config = new ${this.configName}();\n`;
-    code += `${indent}if(params.siggerUrl) config.siggerUrl = params.siggerUrl;\n`;
-    code += `${indent}if(params.hubPath) config.hubPath = params.hubPath;\n`;
-    code += `${indent}if(params.connectionConfig) config.connectionConfig = params.connectionConfig ?? {};\n`;
-    code += `${indent}config.autoConnect = params.autoConnect;\n`;
-    code += `${indent}return config;\n`;
-    code += `}\n\n`;
+    code += `export function ${this.configName}Factory(params: ${this.generation.configParamsName}) {${EOL}${EOL}`;
+    code += `${indent}const config = new ${this.configName}();${EOL}`;
+    code += `${indent}if(params.siggerUrl) config.siggerUrl = params.siggerUrl;${EOL}`;
+    code += `${indent}if(params.hubPath) config.hubPath = params.hubPath;${EOL}`;
+    code += `${indent}if(params.connectionConfig) config.connectionConfig = params.connectionConfig ?? {};${EOL}`;
+    code += `${indent}config.autoConnect = params.autoConnect;${EOL}`;
+    code += `${indent}return config;${EOL}`;
+    code += `}${EOL}${EOL}`;
 
     return code;
   }
@@ -175,8 +176,8 @@ class NgHubGeneration extends TsHubGeneration {
     let code = '';
     code += this.generateImportsCode();
 
-    code += `@Injectable({ providedIn: 'root' })\n`;
-    code += `export class ${this.hub.exportedName} {\n\n`;
+    code += `@Injectable({ providedIn: 'root' })${EOL}`;
+    code += `export class ${this.hub.exportedName} {${EOL}${EOL}`;
 
     code += this.generateSignlRFieldsCode();
     code += this.generateEventsCode();
@@ -184,40 +185,40 @@ class NgHubGeneration extends TsHubGeneration {
     code += this.generateSignalRMethodsCode();
     code += this.generateUtilMethodsCode();
 
-    code += `}\n`;
+    code += `}${EOL}`;
     return code;
   }
 
   generateImportsCode() {
     let code = '';
 
-    code += `import * as signalR from '@microsoft/signalr';\n`;
-    if (this.hasModels) code += `import * as models from './models';\n`;
-    code += `import { ${this.configName} } from './${this.hub.exportedName}.configuration';\n`;
-    code += `import { Injectable } from '@angular/core';\n`;
-    code += `import { BehaviorSubject, ReplaySubject, from, Observable, of, Subject, throwError } from 'rxjs';\n`;
-    code += `import { catchError, filter, switchMap, take } from 'rxjs/operators';\n\n\n`;
+    code += `import * as signalR from '@microsoft/signalr';${EOL}`;
+    if (this.hasModels) code += `import * as models from './models';${EOL}`;
+    code += `import { ${this.configName} } from './${this.hub.exportedName}.configuration';${EOL}`;
+    code += `import { Injectable } from '@angular/core';${EOL}`;
+    code += `import { BehaviorSubject, ReplaySubject, from, Observable, of, Subject, throwError } from 'rxjs';${EOL}`;
+    code += `import { catchError, filter, switchMap, take } from 'rxjs/operators';${EOL}${EOL}${EOL}`;
     return code;
   }
 
   generateSignlRFieldsCode() {
     let indent = indentation.L1;
     let code = '';
-    code += `${indent}/* ${''.padStart(80, '-')} */\n`;
-    code += `${indent}/* ${'SignalR Fields'.padEnd(80)} */\n`;
-    code += `${indent}/* ${''.padStart(80, '-')} */\n\n`;
-    code += `${indent}/** signalR connection */\n`;
-    code += `${indent}private readonly _connection: signalR.HubConnection;\n\n`;
+    code += `${indent}/* ${''.padStart(80, '-')} */${EOL}`;
+    code += `${indent}/* ${'SignalR Fields'.padEnd(80)} */${EOL}`;
+    code += `${indent}/* ${''.padStart(80, '-')} */${EOL}${EOL}`;
+    code += `${indent}/** signalR connection */${EOL}`;
+    code += `${indent}private readonly _connection: signalR.HubConnection;${EOL}${EOL}`;
 
-    code += `${indent}/** Internal connection state subject */\n`;
-    code += `${indent}private readonly _connected$ = new BehaviorSubject<boolean>(false);\n`;
-    code += `${indent}/** Connection state observable */\n`;
-    code += `${indent}readonly connected$ = this._connected$.asObservable();\n\n`;
+    code += `${indent}/** Internal connection state subject */${EOL}`;
+    code += `${indent}private readonly _connected$ = new BehaviorSubject<boolean>(false);${EOL}`;
+    code += `${indent}/** Connection state observable */${EOL}`;
+    code += `${indent}readonly connected$ = this._connected$.asObservable();${EOL}${EOL}`;
 
-    code += `${indent}/** Internal connection error subject */\n`;
-    code += `${indent}private readonly _error$ = new Subject<any>();\n`;
-    code += `${indent}/** Connection error observable */\n`;
-    code += `${indent}readonly error$ = this._error$.asObservable();\n\n`;
+    code += `${indent}/** Internal connection error subject */${EOL}`;
+    code += `${indent}private readonly _error$ = new Subject<any>();${EOL}`;
+    code += `${indent}/** Connection error observable */${EOL}`;
+    code += `${indent}readonly error$ = this._error$.asObservable();${EOL}${EOL}`;
     return code;
   }
 
@@ -227,9 +228,9 @@ class NgHubGeneration extends TsHubGeneration {
     if (!events) return code;
 
     let indent = indentation.L1;
-    code += `${indent}/* ${''.padStart(80, '-')} */\n`;
-    code += `${indent}/* ${'SignalR Events'.padEnd(80)} */\n`;
-    code += `${indent}/* ${''.padStart(80, '-')} */\n\n`;
+    code += `${indent}/* ${''.padStart(80, '-')} */${EOL}`;
+    code += `${indent}/* ${'SignalR Events'.padEnd(80)} */${EOL}`;
+    code += `${indent}/* ${''.padStart(80, '-')} */${EOL}${EOL}`;
 
     for (let evIdx = 0; evIdx < events.length; evIdx++) {
       const e = events[evIdx];
@@ -270,10 +271,10 @@ class NgHubGeneration extends TsHubGeneration {
         args = 'any';
       }
 
-      code += `${indent}/** Internal ${e.caption} ${subject} */\n`;
-      code += `${indent}private readonly _${e.exportedName}$ = new ${subject}<${args}>();\n`;
-      code += `${indent}/** ${e.caption} Observable */\n`;
-      code += `${indent}readonly ${e.exportedName}$ = this._${e.exportedName}$.asObservable();\n\n`;
+      code += `${indent}/** Internal ${e.caption} ${subject} */${EOL}`;
+      code += `${indent}private readonly _${e.exportedName}$ = new ${subject}<${args}>();${EOL}`;
+      code += `${indent}/** ${e.caption} Observable */${EOL}`;
+      code += `${indent}readonly ${e.exportedName}$ = this._${e.exportedName}$.asObservable();${EOL}${EOL}`;
     }
 
     return code;
@@ -286,41 +287,41 @@ class NgHubGeneration extends TsHubGeneration {
     let indent4 = indentation.L4;
 
     let code = '';
-    code += `${indent}/* ${''.padStart(80, '-')} */\n`;
-    code += `${indent}/* ${`${this.hub.caption} service constructor`.padEnd(80)} */\n`;
-    code += `${indent}/* ${''.padStart(80, '-')} */\n\n`;
+    code += `${indent}/* ${''.padStart(80, '-')} */${EOL}`;
+    code += `${indent}/* ${`${this.hub.caption} service constructor`.padEnd(80)} */${EOL}`;
+    code += `${indent}/* ${''.padStart(80, '-')} */${EOL}${EOL}`;
 
-    code += `${indent}/** ${this.hub.caption} service constructor */\n`;
-    code += `${indent}constructor(\n`;
-    code += `${indent2}private _config: ${this.configName}\n`;
-    code += `${indent}){\n\n`;
+    code += `${indent}/** ${this.hub.caption} service constructor */${EOL}`;
+    code += `${indent}constructor(${EOL}`;
+    code += `${indent2}private _config: ${this.configName}${EOL}`;
+    code += `${indent}){${EOL}${EOL}`;
 
-    code += `${indent2}/** Full Url and Path of SignalR Endpoint */\n`;
-    code += `${indent2}const fullUrl = (this._config.siggerUrl?.replace(/\\\/+$/, '') ?? '') + '/' +\n`;
-    code += `${indent4}((this._config.hubPath ?? this._config.defaultHubPath)?.replace(/^\\\/+/, '') ?? '');\n\n`;
+    code += `${indent2}/** Full Url and Path of SignalR Endpoint */${EOL}`;
+    code += `${indent2}const fullUrl = (this._config.siggerUrl?.replace(/\\\/+$/, '') ?? '') + '/' +${EOL}`;
+    code += `${indent4}((this._config.hubPath ?? this._config.defaultHubPath)?.replace(/^\\\/+/, '') ?? '');${EOL}${EOL}`;
 
-    code += `${indent2}this._connection = new signalR.HubConnectionBuilder()\n`;
-    code += `${indent3}.withUrl(fullUrl, this._config.connectionConfig)\n`;
-    code += `${indent3}.withAutomaticReconnect()\n`;
-    code += `${indent3}// .configureLogging(signalR.LogLevel.Trace) /* for debug traces */\n`;
-    code += `${indent3}.build();\n\n`;
+    code += `${indent2}this._connection = new signalR.HubConnectionBuilder()${EOL}`;
+    code += `${indent3}.withUrl(fullUrl, this._config.connectionConfig)${EOL}`;
+    code += `${indent3}.withAutomaticReconnect()${EOL}`;
+    code += `${indent3}// .configureLogging(signalR.LogLevel.Trace) /* for debug traces */${EOL}`;
+    code += `${indent3}.build();${EOL}${EOL}`;
 
     const events = this.hub.events;
     if (events) {
-      code += `${indent2}/** register events */\n`;
+      code += `${indent2}/** register events */${EOL}`;
       for (let evIdx = 0; evIdx < events.length; evIdx++) {
         const e = events[evIdx];
         code += `${indent2}${this.generateEventHandlerCode(e)}`;
       }
-      code += `\n\n`;
+      code += `${EOL}${EOL}`;
     }
 
-    code += `${indent2}/** connect to hub-server */\n`;
-    code += `${indent2}if (_config.autoConnect){\n`;
-    code += `${indent3}this.getConnection();\n`;
-    code += `${indent2}}\n\n`; // close constructor
+    code += `${indent2}/** connect to hub-server */${EOL}`;
+    code += `${indent2}if (_config.autoConnect){${EOL}`;
+    code += `${indent3}this.getConnection();${EOL}`;
+    code += `${indent2}}${EOL}${EOL}`; // close constructor
 
-    code += `${indent}}\n\n`; // close constructor
+    code += `${indent}}${EOL}${EOL}`; // close constructor
     return code;
   }
 
@@ -343,7 +344,7 @@ class NgHubGeneration extends TsHubGeneration {
       if (isNestedObject) invokeArgs += '}';
     }
 
-    return `this._connection.on("${e.name}", (${eventArgs}) => this._${e.exportedName}$.next(${invokeArgs}));\n`;
+    return `this._connection.on("${e.name}", (${eventArgs}) => this._${e.exportedName}$.next(${invokeArgs}));${EOL}`;
   }
 
   generateSignalRMethodsCode() {
@@ -354,9 +355,9 @@ class NgHubGeneration extends TsHubGeneration {
     let indent2 = indentation.L2;
 
     let code = '';
-    code += `${indent}/* ${''.padStart(80, '-')} */\n`;
-    code += `${indent}/* ${'signalR invoke Methods'.padEnd(80)} */\n`;
-    code += `${indent}/* ${''.padStart(80, '-')} */\n\n`;
+    code += `${indent}/* ${''.padStart(80, '-')} */${EOL}`;
+    code += `${indent}/* ${'signalR invoke Methods'.padEnd(80)} */${EOL}`;
+    code += `${indent}/* ${''.padStart(80, '-')} */${EOL}${EOL}`;
 
     for (let methodIndex = 0; methodIndex < methods.length; methodIndex++) {
       const method = methods[methodIndex];
@@ -380,10 +381,10 @@ class NgHubGeneration extends TsHubGeneration {
 
       const retType = this._getTypeDeclaration(method.returnType);
 
-      code += `${indent}/** ${method.name} */\n`;
-      code += `${indent}${method.exportedName}(${argsDef}) {\n`;
-      code += `${indent2}return this.invoke<${retType}>('${method.name}'${argsCall});\n`;
-      code += `${indent}}\n\n`; // close method
+      code += `${indent}/** ${method.name} */${EOL}`;
+      code += `${indent}${method.exportedName}(${argsDef}) {${EOL}`;
+      code += `${indent2}return this.invoke<${retType}>('${method.name}'${argsCall});${EOL}`;
+      code += `${indent}}${EOL}${EOL}`; // close method
     }
 
     return code;
@@ -485,8 +486,8 @@ private invoke<T>(method: string, ...args: any[]): Observable<T> {
 `;
     return code
       .split('\n')
-      .map((l) => indent + l)
-      .join('\n');
+      .map((l) => indent + l.replaceAll('\r', ''))
+      .join(EOL);
   }
 
   async getServiceDirectory() {
@@ -560,23 +561,23 @@ class NgGeneration extends TsGeneration {
   generateConfigParamsCode() {
     let indent = indentation.L1;
     let code = '';
-    code += `import { IHttpConnectionOptions } from '@microsoft/signalr';\n\n`;
+    code += `import { IHttpConnectionOptions } from '@microsoft/signalr';${EOL}${EOL}`;
 
-    code += `/** Sigger Configuration */\n`;
-    code += `export interface ${this.configParamsName} {\n`;
-    code += `${indent}/**Root Url of SignalR endpoint; */\n`;
-    code += `${indent}siggerUrl: string;\n\n`;
+    code += `/** Sigger Configuration */${EOL}`;
+    code += `export interface ${this.configParamsName} {${EOL}`;
+    code += `${indent}/**Root Url of SignalR endpoint; */${EOL}`;
+    code += `${indent}siggerUrl: string;${EOL}${EOL}`;
 
-    code += `${indent}/**Path of SignalR endpoint; */\n`;
-    code += `${indent}hubPath?: string;\n\n`;
+    code += `${indent}/**Path of SignalR endpoint; */${EOL}`;
+    code += `${indent}hubPath?: string;${EOL}${EOL}`;
 
-    code += `${indent}/** Connect to server on startup. */\n`;
-    code += `${indent}autoConnect?: boolean;\n`;
+    code += `${indent}/** Connect to server on startup. */${EOL}`;
+    code += `${indent}autoConnect?: boolean;${EOL}`;
 
-    code += `${indent}/** Url of Sigger endpoint; */\n`;
-    code += `${indent}connectionConfig: IHttpConnectionOptions;\n\n`;
+    code += `${indent}/** Url of Sigger endpoint; */${EOL}`;
+    code += `${indent}connectionConfig: IHttpConnectionOptions;${EOL}${EOL}`;
 
-    code += `}\n`;
+    code += `}${EOL}`;
     return code;
   }
 }
