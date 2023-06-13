@@ -541,7 +541,11 @@ class NgGeneration extends TsGeneration {
       await hubGenerator.generateModuleIndex();
       hubGenerator.verbose('generation completed');
     } catch (err) {
-      hubGenerator.error('generation failed', this.rootDirectory, this.output, err);
+      hubGenerator.error('generation failed', {
+        rootDirectory: this.rootDirectory,
+        outputDirectory: this.output,
+        error: err,
+      });
     }
   }
 

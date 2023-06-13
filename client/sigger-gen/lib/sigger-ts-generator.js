@@ -143,16 +143,32 @@ export class TsHubGeneration extends TsGenerationBase {
   }
 
   createTypeEnumCatalog(enumDef) {
+    const suffix = 'Catalog';
+    const keyProperty = (prop) => prop.exportedName;
+
     let code = '';
-    code += `/** ${enumDef.caption} Catalog */${EOL}`;
+    code += `/** ${enumDef.caption} ${suffix} */${EOL}`;
     code += `/** generated from .net Type ${enumDef.dotnetType} */${EOL}`;
-    code += `export const ${enumDef.exportedName}Catalog = {${EOL}`;
+    code += `export const ${enumDef.exportedName}${suffix} = {${EOL}`;
+
     for (let itemIdx = 0; itemIdx < enumDef.items.length; itemIdx++) {
       const prop = enumDef.items[itemIdx];
-      generateItem(prop.exportedName, prop, itemIdx);
-      generateItem(prop.value, prop, itemIdx);
-      generateItem(`'${prop.valueText}'`, prop, itemIdx, true);
+      const key = keyProperty(prop);
+      let indent = indentation.L1;
+
+      code += `${indent}${EOL}`;
+      code += `${indent}/** ${prop.caption} */${EOL}`;
+      code += `${indent}${key}: {${EOL}`;
+      indent = indentation.L2;
+      code += `${indent}caption: "${prop.caption}",${EOL}`;
+      if (prop.description) code += `${indent}description: "${prop.description}",${EOL}`;
+      code += `${indent}value: ${enumDef.exportedName}.${prop.exportedName},${EOL}`;
+      code += `${indent}textValue: '${prop.valueText}',${EOL}`;
+      code += `${indent}intValue: ${prop.value}${EOL}`;
+      indent = indentation.L1;
+      code += `${indent}}${itemIdx == enumDef.items.length - 1 ? '' : ','}${EOL}`;
     }
+
     code += `}${EOL}${EOL}`;
     code += `/** ${enumDef.caption} Items List */${EOL}`;
     code += `/** generated from .net Type ${enumDef.dotnetType} */${EOL}`;
@@ -164,21 +180,6 @@ export class TsHubGeneration extends TsGenerationBase {
     code += `/** generated from .net Type ${enumDef.dotnetType} */${EOL}`;
     code += `export const ${enumDef.exportedName}Record : Record<${enumDef.exportedName}, ${enumMetaDef}>${EOL}`;
     code += `    = Object.assign({}, ...Object.values(${enumDef.exportedName}Catalog).map((x) => ({ [x.value]: x })));${EOL}${EOL}${EOL}`;
-
-    function generateItem(key, prop, itemIdx, last = false) {
-      let indent = indentation.L1;
-      code += `${indent}${EOL}`;
-      code += `${indent}/** ${prop.caption} */${EOL}`;
-      code += `${indent}${key}: {${EOL}`;
-      indent = indentation.L2;
-      code += `${indent}caption: "${prop.caption}",${EOL}`;
-      if (prop.description) code += `${indent}description: "${prop.description}",${EOL}`;
-      code += `${indent}value: ${enumDef.exportedName}.${prop.exportedName},${EOL}`;
-      code += `${indent}textValue: '${prop.valueText}',${EOL}`;
-      code += `${indent}intValue: ${prop.value}${EOL}`;
-      indent = indentation.L1;
-      code += `${indent}}${last && itemIdx == enumDef.items.length - 1 ? '' : ','}${EOL}`;
-    }
 
     return code;
   }
