@@ -123,19 +123,19 @@ export class TsHubGeneration extends TsGenerationBase {
       const prop = enumDef.items[itemIdx];
       code += `${EOL}`;
       code += `${indent}/** ${prop.caption} */${EOL}`;
-      code += `${indent}${prop.exportedName} = ${prop.value}${itemIdx == enumDef.items.length - 1 ? '' : ','}${EOL}`;
+      code += `${indent}${prop.exportedName} = '${prop.valueText}'${itemIdx == enumDef.items.length - 1 ? '' : ','}${EOL}`;
     }
     code += `}${EOL}${EOL}`;
 
-    // String-Values export
+    // Number-Values export
     code += `/** ${enumDef.caption} */${EOL}`;
     code += `/** generated from .net Type ${enumDef.dotnetType} */${EOL}`;
-    code += `export enum ${enumDef.exportedName}Strings {${EOL}`;
+    code += `export enum ${enumDef.exportedName}Numbers {${EOL}`;
     for (let itemIdx = 0; itemIdx < enumDef.items.length; itemIdx++) {
       const prop = enumDef.items[itemIdx];
       code += `${EOL}`;
       code += `${indent}/** ${prop.caption} */${EOL}`;
-      code += `${indent}${prop.exportedName} = '${prop.valueText}'${itemIdx == enumDef.items.length - 1 ? '' : ','}${EOL}`;
+      code += `${indent}${prop.exportedName} = ${prop.value}${itemIdx == enumDef.items.length - 1 ? '' : ','}${EOL}`;
     }
     code += `}${EOL}${EOL}`;
 
@@ -149,18 +149,9 @@ export class TsHubGeneration extends TsGenerationBase {
     code += `export const ${enumDef.exportedName}Catalog = {${EOL}`;
     for (let itemIdx = 0; itemIdx < enumDef.items.length; itemIdx++) {
       const prop = enumDef.items[itemIdx];
-      let indent = indentation.L1;
-      code += `${indent}${EOL}`;
-      code += `${indent}/** ${prop.caption} */${EOL}`;
-      code += `${indent}${prop.exportedName}: {${EOL}`;
-      indent = indentation.L2;
-      code += `${indent}caption: "${prop.caption}",${EOL}`;
-      if (prop.description) code += `${indent}description: "${prop.description}",${EOL}`;
-      code += `${indent}value: ${enumDef.exportedName}.${prop.exportedName},${EOL}`;
-      code += `${indent}textValue: '${prop.valueText}',${EOL}`;
-      code += `${indent}intValue: ${prop.value}${EOL}`;
-      indent = indentation.L1;
-      code += `${indent}}${itemIdx == enumDef.items.length - 1 ? '' : ','}${EOL}`;
+      generateItem(prop.exportedName, prop, itemIdx);
+      generateItem(prop.value, prop, itemIdx);
+      generateItem(`'${prop.valueText}'`, prop, itemIdx, true);
     }
     code += `}${EOL}${EOL}`;
     code += `/** ${enumDef.caption} Items List */${EOL}`;
@@ -173,6 +164,21 @@ export class TsHubGeneration extends TsGenerationBase {
     code += `/** generated from .net Type ${enumDef.dotnetType} */${EOL}`;
     code += `export const ${enumDef.exportedName}Record : Record<${enumDef.exportedName}, ${enumMetaDef}>${EOL}`;
     code += `    = Object.assign({}, ...Object.values(${enumDef.exportedName}Catalog).map((x) => ({ [x.value]: x })));${EOL}${EOL}${EOL}`;
+
+    function generateItem(key, prop, itemIdx, last = false) {
+      let indent = indentation.L1;
+      code += `${indent}${EOL}`;
+      code += `${indent}/** ${prop.caption} */${EOL}`;
+      code += `${indent}${key}: {${EOL}`;
+      indent = indentation.L2;
+      code += `${indent}caption: "${prop.caption}",${EOL}`;
+      if (prop.description) code += `${indent}description: "${prop.description}",${EOL}`;
+      code += `${indent}value: ${enumDef.exportedName}.${prop.exportedName},${EOL}`;
+      code += `${indent}textValue: '${prop.valueText}',${EOL}`;
+      code += `${indent}intValue: ${prop.value}${EOL}`;
+      indent = indentation.L1;
+      code += `${indent}}${last && itemIdx == enumDef.items.length - 1 ? '' : ','}${EOL}`;
+    }
 
     return code;
   }
