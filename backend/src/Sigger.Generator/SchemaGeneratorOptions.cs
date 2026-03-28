@@ -1,4 +1,4 @@
-﻿using Sigger.Generator.Parser;
+using Sigger.Generator.Parser;
 
 namespace Sigger.Generator;
 
@@ -51,4 +51,9 @@ public class SchemaGeneratorOptions
     /// true if empty collections are rendered as empty arrays, default false
     /// </summary>
     public bool GenerateEmptyCollections { get; set; } = false;
+
+    /// <summary>
+    /// When false, CLR type names are omitted from the schema (reduces information disclosure; client codegen may need CLR names).
+    /// </summary>
+    public bool IncludeClrMetadataInSchema { get; set; } = true;
 }

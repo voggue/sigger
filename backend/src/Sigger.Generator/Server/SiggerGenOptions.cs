@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.SignalR;
 
@@ -18,6 +18,11 @@ public class SiggerGenOptions
     private List<Action<IEndpointRouteBuilder>> _hubRegistrationActions = new();
 
     public SchemaGeneratorOptions GenerationOptions { get; } = new();
+
+    /// <summary>
+    /// When to expose the schema JSON endpoint. Prefer <see cref="SiggerSchemaEndpointMode.DevelopmentOnly"/> in production.
+    /// </summary>
+    public SiggerSchemaEndpointMode SchemaEndpointMode { get; set; } = SiggerSchemaEndpointMode.Always;
 
     /// <summary>
     /// The path to call the sigger definition
@@ -53,6 +58,15 @@ public class SiggerGenOptions
     public SiggerGenOptions WithGeneratorOptions(Action<SchemaGeneratorOptions> configure)
     {
         configure.Invoke(GenerationOptions);
+        return this;
+    }
+
+    /// <summary>
+    /// Configure when the schema endpoint is exposed.
+    /// </summary>
+    public SiggerGenOptions WithSchemaEndpointMode(SiggerSchemaEndpointMode mode)
+    {
+        SchemaEndpointMode = mode;
         return this;
     }
 

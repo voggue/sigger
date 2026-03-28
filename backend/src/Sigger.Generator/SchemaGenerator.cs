@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using Sigger.Generator.Parser;
@@ -125,7 +125,7 @@ public class SchemaGenerator
 
         return new HubDefinition
         {
-            ClrType = hub.ClrType.Format(true),
+            ClrType = options.IncludeClrMetadataInSchema ? hub.ClrType.Format(true) : null,
             Caption = display?.GetName() ?? hub.Name,
             Description = display?.GetDescription(),
             Path = hub.Path,
@@ -180,7 +180,7 @@ public class SchemaGenerator
 
 
             ExportedName = options.GetFormattedName(srcEnum.ClrType.Name, FormatKind.EnumName),
-            ClrType = srcEnum.ClrType.Format(true),
+            ClrType = options.IncludeClrMetadataInSchema ? srcEnum.ClrType.Format(true) : null,
             Caption = display?.GetName() ?? srcEnum.ClrType.Name,
             Description = display?.GetDescription(),
             Order = display?.GetOrder()
@@ -198,7 +198,7 @@ public class SchemaGenerator
                 .ToImmutableList(),
 
             ExportedName = options.GetFormattedName(srcClass.ClrType.Name, FormatKind.ClassName),
-            ClrType = srcClass.ClrType.Format(true),
+            ClrType = options.IncludeClrMetadataInSchema ? srcClass.ClrType.Format(true) : null,
             Caption = display?.GetName() ?? srcClass.ClrType.Name,
             Description = display?.GetDescription(),
             Order = display?.GetOrder()

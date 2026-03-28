@@ -1,10 +1,12 @@
 # Sigger-Client
 
 ## Abstract
-Generates SignalR client from Sigger-Definition file. See https://github.com/voggue/sigger
+
+Generates SignalR client from Sigger-Definition file. See <https://github.com/voggue/sigger>
 
 ## Install
-```
+
+```bash
 npm i @microsoft/signalr --save
 npm i sigger-gen --save
 ```
@@ -12,13 +14,16 @@ npm i sigger-gen --save
 ## Usage
 
 ### Add script
+
 Extend the script section in your package.json
-```
+
+```json
  "scripts": {
     ...
     "sigger": "sigger-gen https://localhost:7291/sigger/sigger.json ./src/hubs -v -f angular"
   },
 ```
+
 where `https://localhost:7291/sigger/sigger.json` is the url of your sigger endpoint. and `./src/hubs`
 is the destinition directory of the signalR client stub
 
@@ -27,7 +32,8 @@ is the destinition directory of the signalR client stub
 ### Generate Client stub
 
 Now you are able to call
-```
+
+```bash
 # for npm 
 npm run sigger
 
@@ -41,7 +47,7 @@ This will generate the client stub files in the destination folder
 
 In your `app.module.ts` add the generated hub (replace `ChatHub` with your gnerated Hub Module(s)).
 
-```
+```ts
 import { ChatHubModule } from 'src/hubs/ChatHub';
 
 @NgModule({
@@ -59,7 +65,8 @@ export class AppModule { }
 Create a new component e.g. HomeComponent
 
 `home.component.ts`
-```
+
+```ts
 private readonly _messages$ = new BehaviorSubject<Message[]>([]);
 readonly messages$ = this._messages$.asObservable();
 

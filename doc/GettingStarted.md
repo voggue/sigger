@@ -1,15 +1,16 @@
 # Sigger getting started
 
-In this gettingSTarted we will build a simple chat app using Sigger.
- - The server is an ASP.net core application.
- - The client will be an Angular clientI
+In this getting started guide we will build a simple chat app using Sigger.
+
+- The server is an ASP.NET Core application (multi-target **.NET 8 / 9 / 10**, see repository `global.json` / SDK).
+- The client is an Angular application.
 
 ## Server
 
-### Create a new asp.net 6 app
+### Create a new ASP.NET Core app
 
-First we need a **.net6** ASP.net application. 
-E.g. https://docs.microsoft.com/en-us/visualstudio/get-started/csharp/tutorial-aspnet-core.
+Create an ASP.NET Core Web app (.NET 8 or later).  
+See [Tutorial: Erste Web-API](https://learn.microsoft.com/aspnet/core/tutorials/first-web-api) or your preferred template.
 
 Include the Sigger Library into your project:
 
@@ -62,23 +63,34 @@ Add the Sigger Services to your Startup-Code
 chat hub and the sigger and sigger ui middleware.
 
 ```csharp
+using Sigger.Generator;
+using Sigger.Generator.Server;
+using Sigger.UI;
+// using your project's hub namespace, e.g.:
+// using MyApp.Hubs.Chat;
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSigger(o => o
     .WithHub<ChatHub>("/hubs/v1/chat")
-);
+    // Schema JSON only in Development (recommended for production setups)
+    .WithSchemaEndpointMode(SiggerSchemaEndpointMode.DevelopmentOnly));
+
 builder.Services.AddCors(o =>
-    o.AddDefaultPolicy(c => c
-        .AllowAnyOrigin()
+    o.AddPolicy("DevCors", p => p
+        .WithOrigins("https://localhost:4200", "http://localhost:4200")
         .AllowAnyHeader()
         .AllowAnyMethod()
-    ));
+        .AllowCredentials()));
 
 var app = builder.Build();
-app.UseCors();
+app.UseCors("DevCors");
 app.UseSigger();
-app.UseSiggerUi();
+// Tutorial: UI auch außerhalb Development – in Produktion lieber weglassen oder nur Development
+app.UseSiggerUi(o => o.WithVisibility(SiggerUiVisibility.Always));
 app.Run();
 ```
+
+Sicherheit: Für echte Deployments siehe [SECURITY.md](../SECURITY.md) (CORS, Schema-Exposure, `sigger-gen` TLS).
 
 ### Run the server
 
@@ -178,7 +190,7 @@ imports: [
 
 > Note: It is a very bad practice to write urls for communication directly into the modules.
 > For a proper project, these should be defined in the environments and imported.
-> Help and more details can be found on the https://angular.io/ page.
+> Help and more details can be found on [https://angular.dev](https://angular.dev).
 
 ### Create a test page
 
@@ -221,8 +233,8 @@ export class AppComponent {
     private add(msg: Message | null) {
         if (msg?.user && msg?.content) {
             msg.user = msg.user.length < 8 ? msg.user : msg.user.substring(0, 6) + '...';
-            m.push(msg);
-            this.messages$.next([...m]);
+            const next = [...this.messages$.value, msg];
+            this.messages$.next(next);
         }
     }
 }

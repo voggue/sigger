@@ -1,7 +1,9 @@
-﻿using System.Reflection;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Sigger.Generator.Server;
 
 // ReSharper disable UnusedMethodReturnValue.Global
@@ -40,10 +42,29 @@ public static class StartupExtensions
             generator.AddHub(hub.Key, hub.Value);
 
         var doc = generator.CreateSchema();
+        var json = doc.ToJson();
 
-        // map middleware
-        var middleware = new SiggerGenMiddleware(options, doc);
-        builder.Map(options.Path, middleware.HandleRequest);
+        if (options.SchemaEndpointMode != SiggerSchemaEndpointMode.Disabled)
+        {
+            var env = builder.Services.GetRequiredService<IWebHostEnvironment>();
+            var middleware = new SiggerGenMiddleware(json);
+            builder.Map(options.Path, app =>
+            {
+                if (options.SchemaEndpointMode == SiggerSchemaEndpointMode.DevelopmentOnly
+                    && !env.IsDevelopment())
+                {
+                    app.Run(async context =>
+                    {
+                        context.Response.StatusCode = StatusCodes.Status404NotFound;
+                        await context.Response.WriteAsync("Sigger schema is not exposed in this environment.");
+                    });
+                    return;
+                }
+
+                middleware.HandleRequest(app);
+            });
+        }
+
         return builder;
     }
 }

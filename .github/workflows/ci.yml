@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  dotnet:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET (8 / 9)
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            9.0.x
+
+      - name: Setup .NET 10 (preview until GA on runners)
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+          dotnet-quality: "preview"
+
+      - name: UI bundle (Sigger.UI)
+        working-directory: backend/src/Sigger.UI/Client/sigger-ui
+        run: |
+          npm ci
+          npm run deploy
+
+      - name: Restore / build / test
+        working-directory: backend
+        run: |
+          dotnet restore Sigger.sln
+          dotnet build Sigger.sln --no-restore -c Release
+          dotnet test Sigger.sln --no-build -c Release --verbosity minimal
+
+  sigger-gen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: client/sigger-gen/package-lock.json
+
+      - name: npm ci & test
+        working-directory: client/sigger-gen
+        run: |
+          npm ci
+          npm test

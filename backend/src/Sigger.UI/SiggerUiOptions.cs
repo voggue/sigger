@@ -39,4 +39,15 @@ public class SiggerUiOptions
         IgnoreCaching = ignore;
         return this;
     }
+
+    /// <summary>
+    /// When the interactive test UI is exposed. Default is <see cref="SiggerUiVisibility.DevelopmentOnly"/>.
+    /// </summary>
+    public SiggerUiVisibility Visibility { get; set; } = SiggerUiVisibility.DevelopmentOnly;
+
+    public SiggerUiOptions WithVisibility(SiggerUiVisibility visibility)
+    {
+        Visibility = visibility;
+        return this;
+    }
 }

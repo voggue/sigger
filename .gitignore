@@ -19,6 +19,9 @@ x64/
 x86/
 build/
 bld/
+# Embedded Sigger UI bundles must be versioned (see backend/src/Sigger.UI/README or CI npm run deploy)
+!backend/src/Sigger.UI/Resources/build/
+!backend/src/Sigger.UI/Resources/build/**
 [Oo]bj/
 
 .angular/

@@ -7,6 +7,9 @@ const cli = meow(
   `
   Usage
     $ sigger-gen <sigger.json> <destinationFolder>
+  Options
+    --insecure-tls  Disable TLS certificate validation for HTTPS URLs (dev only)
+
   Examples
 	  $ sigger-gen ./output/sigger.json ./generated/
 `,
@@ -29,6 +32,10 @@ const cli = meow(
         type: 'string',
         alias: 'f',
         default: 'angular',
+      },
+      insecureTls: {
+        type: 'boolean',
+        default: false,
       },
     },
   }

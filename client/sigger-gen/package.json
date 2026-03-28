@@ -5,7 +5,7 @@
   "description": "Generates stubs für sigger hub definition (SignalR definition language)",
   "main": "index.js",
   "scripts": {
-    "test": "test.js",
+    "test": "node --test test/parser.test.mjs",
     "cleanup": "rimraf ./src/hubs",
     "generate": "sigger-gen https://localhost:5005/sigger/sigger.json ./src/hubs -v -f angular",
     "sigger": "npm run cleanup&npm run generate"
@@ -21,10 +21,12 @@
   ],
   "author": "voggue",
   "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
   "dependencies": {
     "find-up": "^6.3.0",
     "meow": "^11.0.0",
-    "node-fetch": "^3.3.0",
     "rimraf": "^4.3.0"
   }
 }

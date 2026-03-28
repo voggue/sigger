@@ -1,8 +1,11 @@
-﻿// ReSharper disable UnusedMethodReturnValue.Global
+// ReSharper disable UnusedMethodReturnValue.Global
 // ReSharper disable UnusedMember.Global
 
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Sigger.UI;
 
@@ -13,7 +16,10 @@ public static class StartupExtensions
         var options = new SiggerUiOptions(builder);
         configure?.Invoke(options);
 
-        // map middleware
+        var env = builder.Services.GetRequiredService<IWebHostEnvironment>();
+        if (options.Visibility == SiggerUiVisibility.DevelopmentOnly && !env.IsDevelopment())
+            return builder;
+
         var middleware = new SiggerUiMiddleware(options);
         builder.MapWhen(ctx => Precondition(ctx, options), middleware.HandleRequest);
         return builder;

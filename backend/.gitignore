@@ -18,6 +18,8 @@
 x64/
 x86/
 build/
+!src/Sigger.UI/Resources/build/
+!src/Sigger.UI/Resources/build/**
 bld/
 [Bb]in/
 [Oo]bj/

@@ -1,21 +1,31 @@
-# Security Policy
+# Sicherheitshinweise zu Sigger
 
-## Supported Versions
+## Meldung von Schwachstellen
 
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
+Bitte meldet Sicherheitsprobleme vertraulich über die Kontaktmöglichkeiten des GitHub-Repositorys (Private Security Advisory), nicht als öffentliches Issue, wenn ihr sensible Details teilen müsst.
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 5.1.x   | :white_check_mark: |
-| 5.0.x   | :x:                |
-| 4.0.x   | :white_check_mark: |
-| < 4.0   | :x:                |
+## Bekannte Risiken und empfohlene Gegenmaßnahmen
 
-## Reporting a Vulnerability
+### Schema-Endpunkt (`/sigger/sigger.json` o. ä.)
 
-Use this section to tell people how to report a vulnerability.
+Das JSON-Schema beschreibt eure SignalR-Hubs (Methoden, DTOs, ggf. CLR-Typnamen). Ein öffentlich erreichbarer Endpunkt entspricht fachlich einer offenen API-Dokumentation.
 
-Tell them where to go, how often they can expect to get an update on a
-reported vulnerability, what to expect if the vulnerability is accepted or
-declined, etc.
+- In Produktion: `WithSchemaEndpointMode(SiggerSchemaEndpointMode.DevelopmentOnly)` oder `Disabled`, oder zusätzlich Authentifizierung/Netzwerkrestriktionen.
+- Optional: In Produktion `IncludeClrMetadataInSchema = false` setzen, um weniger Implementierungsdetails preiszugeben (kann Codegeneratoren beeinflussen).
+
+### Sigger UI
+
+Die eingebettete Test-UI ist für Entwicklung gedacht. Standardmäßig wird sie nur in der Umgebung **Development** registriert (`SiggerUiVisibility.DevelopmentOnly`). Für Tests außerhalb von Development bewusst `UseSiggerUi(o => o.WithVisibility(SiggerUiVisibility.Always))` setzen.
+
+### CORS und SignalR
+
+`AllowAnyOrigin()` zusammen mit authentifizierten Cookies oder `Credentials` ist nicht geeignet. Verwendet benannte Policies, konkrete Origins und bei Bedarf `AllowCredentials()`.
+
+### CLI `sigger-gen`
+
+- Standard: TLS-Zertifikate werden wie vom System vorgegeben geprüft.
+- Nur bei Bedarf und niemals in CI/Produktion: `--insecure-tls` (deaktiviert die Zertifikatsprüfung und ist anfällig für Man-in-the-Middle-Angriffe).
+
+## Abhängigkeiten
+
+Überwacht transitive NuGet- und npm-Pakete (z. B. `dotnet list package --vulnerable`, `npm audit`) und haltet ASP.NET Core, EF Core und den Node-Client aktuell.

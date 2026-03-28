@@ -1,4 +1,3 @@
-﻿using Duende.IdentityServer.EntityFramework.Entities;
 using Microsoft.AspNetCore.SignalR;
 using Sigger.Registry;
 
