@@ -19,15 +19,16 @@
           ><span class="model-box"
             ><span class="model model-title">{catalogDef.caption} </span></span
           ></span
-        ><span class="model-toggle" class:collapsed={!expanded} /><span />
+        ><span class="model-toggle" class:collapsed={!expanded}></span><span></span>
       </button>
     </span>
 
     {#if expanded && catalogDef.items?.length}
       <div class="definition">
         <table>
-          {#each catalogDef.items as item}
-            <tr>
+          <tbody>
+            {#each catalogDef.items as item}
+              <tr>
               <td>
                 {item.value}
               </td>
@@ -40,8 +41,9 @@
                   {item.caption}
                 {/if}
               </td>
-            </tr>
-          {/each}
+              </tr>
+            {/each}
+          </tbody>
         </table>
       </div>
     {/if}

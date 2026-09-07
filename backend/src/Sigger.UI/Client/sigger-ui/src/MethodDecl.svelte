@@ -33,6 +33,7 @@
       }
 
       const connection = await getConnection(hub);
+      if (!connection) throw new Error("Unable to connect to the hub.");
       response = await connection.invoke(method.name, ...args);
       console.log("response", response);
     } catch (err) {
@@ -112,7 +113,7 @@
         <h4>Parameters</h4>
 
         <div class="parameters">
-          <ParametersDecl hideValue={false} paramters={method.arguments} />
+          <ParametersDecl {hub} hideValue={false} paramters={method.arguments} />
         </div>
       </div>
     {/if}
