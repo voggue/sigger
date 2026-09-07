@@ -4454,9 +4454,9 @@
   "version" "0.0.8"
 
 "nanoid@^3.3.4":
-  "integrity" "sha512-MqBkQh/OHTS2egovRtLk45wEyNXwF+cokD+1YPf9u5VfJiRdAiRwB2froX5Co9Rh20xs4siNPm8naNotSD6RBw=="
-  "resolved" "https://registry.npmjs.org/nanoid/-/nanoid-3.3.4.tgz"
-  "version" "3.3.4"
+  "integrity" "sha512-DTg4MJbGMWkfi6VZFdNt2/caMbQy4Ou+Op/hJQvGEWcnVfoA1QA+xzRKAzw9jD6+GVOOeYr/mIcuDSdug6F6+w=="
+  "resolved" "https://registry.npmjs.org/nanoid/-/nanoid-3.3.18.tgz"
+  "version" "3.3.18"
 
 "needle@^3.1.0":
   "integrity" "sha512-gCE9weDhjVGCRqS8dwDR/D3GTAeyXLXuqp7I8EzH6DllZGXSUyxuqqLh+YX9rMAWaaTFyVAg6rHGL25dqvczKw=="
