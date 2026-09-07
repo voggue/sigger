@@ -28,7 +28,8 @@ jobs:
       - name: UI bundle (Sigger.UI)
         working-directory: backend/src/Sigger.UI/Client/sigger-ui
         run: |
-          npm ci
+          npm ci --no-audit --no-fund
+          npm audit --audit-level=high
           npm run deploy
 
       - name: Restore / build / test
@@ -52,5 +53,6 @@ jobs:
       - name: npm ci & test
         working-directory: client/sigger-gen
         run: |
-          npm ci
+          npm ci --no-audit --no-fund
+          npm audit --audit-level=high
           npm test
