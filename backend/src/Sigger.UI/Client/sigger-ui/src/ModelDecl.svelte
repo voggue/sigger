@@ -19,15 +19,16 @@
           ><span class="model-box"
             ><span class="model model-title">{typeDecl.caption} </span></span
           ></span
-        ><span class="model-toggle" class:collapsed={!expanded} /><span />
+        ><span class="model-toggle" class:collapsed={!expanded}></span><span></span>
       </button>
     </span>
 
     {#if expanded && typeDecl.properties?.length}
       <div class="definition">
         <table>
-          {#each typeDecl.properties as property}
-            <tr>
+          <tbody>
+            {#each typeDecl.properties as property}
+              <tr>
               <td>{property.exportedName}:</td>
               <td>
                 {#if isComplexOrEnum(property.type)}
@@ -38,8 +39,9 @@
                   {property.type.exportedType}
                 {/if}
               </td>
-            </tr>
-          {/each}
+              </tr>
+            {/each}
+          </tbody>
         </table>
       </div>
     {/if}

@@ -1,0 +1,111 @@
+{
+  "sigger": "2.0.0",
+  "info": {
+    "id": "urn:example:chat-api",
+    "title": "Chat API",
+    "version": "1.0.0",
+    "description": "Beispielvertrag für den Sigger-V2-Entwurf."
+  },
+  "requiredCapabilities": ["core"],
+  "servers": {
+    "development": {
+      "url": "https://localhost:7178",
+      "description": "Lokaler Entwicklungsserver; explizit auswählen."
+    }
+  },
+  "hubs": {
+    "chat": {
+      "path": "/hubs/chat",
+      "protocol": "signalr.json.v1",
+      "security": [],
+      "operations": {
+        "getHistory": {
+          "name": "getHistory",
+          "wireName": "GetHistory",
+          "direction": "clientToServer",
+          "kind": "invocation",
+          "readOnly": true,
+          "parameters": [
+            {
+              "name": "request",
+              "kind": "value",
+              "schema": { "$ref": "#/components/schemas/HistoryRequest" }
+            }
+          ],
+          "result": {
+            "kind": "value",
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#/components/schemas/Message" }
+            }
+          },
+          "description": "Liest die letzten sichtbaren Nachrichten in chronologischer Reihenfolge; keine fachlichen Änderungen."
+        },
+        "sendMessage": {
+          "name": "sendMessage",
+          "wireName": "SendMessage",
+          "direction": "clientToServer",
+          "kind": "invocation",
+          "parameters": [
+            {
+              "name": "request",
+              "kind": "value",
+              "schema": { "$ref": "#/components/schemas/SendMessageRequest" }
+            }
+          ],
+          "result": {
+            "kind": "value",
+            "schema": { "$ref": "#/components/schemas/Message" }
+          },
+          "description": "Sendet eine Nachricht und liefert die serverseitig vergebene Identität zurück."
+        },
+        "messageReceived": {
+          "name": "onMessageReceived",
+          "wireName": "OnMessageReceived",
+          "direction": "serverToClient",
+          "kind": "notification",
+          "parameters": [
+            {
+              "name": "message",
+              "kind": "value",
+              "schema": { "$ref": "#/components/schemas/Message" }
+            }
+          ],
+          "result": { "kind": "void" },
+          "description": "Eine für diesen Client bestimmte Nachricht. Kein Replay- oder Zustellversprechen."
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HistoryRequest": {
+        "type": "object",
+        "required": ["limit"],
+        "properties": {
+          "limit": { "type": "integer", "minimum": 1, "maximum": 100 }
+        },
+        "additionalProperties": true
+      },
+      "SendMessageRequest": {
+        "type": "object",
+        "required": ["content"],
+        "properties": {
+          "content": { "type": "string", "minLength": 1, "maxLength": 4000 }
+        },
+        "additionalProperties": true
+      },
+      "Message": {
+        "type": "object",
+        "required": ["id", "time", "user", "content"],
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "time": { "type": "string", "format": "date-time" },
+          "user": { "type": "string" },
+          "content": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    }
+  }
+}

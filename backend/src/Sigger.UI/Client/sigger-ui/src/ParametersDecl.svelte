@@ -58,7 +58,7 @@
                   style="width: 100%"
                   contenteditable="true"
                   bind:innerHTML={argument.value}
-                />
+                ></div>
               {:else if isText(argument.type)}
                 <input
                   bind:value={argument.value}

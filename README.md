@@ -26,6 +26,10 @@ See [SECURITY.md](SECURITY.md) (schema endpoint, Sigger UI, CORS, `sigger-gen` T
 
 [doc/GettingStarted.md](doc/GettingStarted.md)
 
+## V2 design
+
+[Sigger V2 – Spezifikation und Architekturentwurf (Deutsch)](doc/V2-Spezifikation.md): proposed contract standard, SDK/runtime, React hooks and TanStack Query, Angular integration, code generation, developer tooling, migration, and release criteria. This describes the planned V2, not the currently implemented API.
+
 ## Build / CI
 
 - **Backend:** from `backend/`: `dotnet build Sigger.sln`, `dotnet test Sigger.sln`. Before packaging **Sigger.UI**, build the Svelte client: `backend/src/Sigger.UI/Client/sigger-ui` → `npm ci` && `npm run deploy` (copies bundles into `Resources/build/`).

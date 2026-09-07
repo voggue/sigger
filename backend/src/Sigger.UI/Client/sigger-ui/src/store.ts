@@ -36,7 +36,7 @@ export async function fetchSchema(host: string) {
         busy.update(() => true);
 
         const resp = await fetch(host);
-        const def: SchemaDocument | undefined = await resp.json();
+        const def: SchemaDocument = await resp.json();
         definition.update(() => def);
 
         const newHubs: HubWithMetadata[] = [];
@@ -54,7 +54,7 @@ export async function fetchSchema(host: string) {
     }
 }
 
-export function getModelId(hub, model) {
+export function getModelId(hub: any, model: any) {
     const h = hub.exportedName ?? hub;
     const m = model.exportedName ?? model.exportedType ?? model;
     return `$!/${h}/models/${m}`.toLowerCase();
@@ -81,8 +81,11 @@ export async function getConnection(hub: HubWithMetadata) {
     }
 
     try {
-        console.log("connect to " + hub.caption ?? hub.name);
+        console.log("connect to " + (hub.caption ?? hub.name));
         const s = get(settings);
+        if (!hub.path || !s?.hubBaseUrl) {
+            throw new Error("Hub path or base URL is not configured.");
+        }
         const c = new signalR.HubConnectionBuilder()
             .withUrl(new URL(hub.path, s.hubBaseUrl).toString(), {
                 skipNegotiation: true,

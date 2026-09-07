@@ -20,7 +20,7 @@
     });
 
     function tryConnect() {
-        fetchSchema(localUrl);
+        if (localUrl) fetchSchema(localUrl);
     }
 
     onDestroy(unsubscribe);

@@ -1,7 +1,8 @@
 <script lang="ts">
   import { fade } from "svelte/transition";
   import ParametersDecl from "./ParametersDecl.svelte";
-  import { HubWithMetadata, getConnection } from "./store";
+  import { getConnection } from "./store";
+  import type { HubWithMetadata } from "./store";
 
   export let hub: HubWithMetadata;
   export let eventDecl: any;
@@ -16,13 +17,13 @@
     eventDecl.expanded = !eventDecl.expanded;
   }
 
-  function convertResponse(args) {
-    var fmt = {};
+  function convertResponse(args: unknown[]) {
+    const fmt: Record<string, unknown> = {};
     for (let argIdx = 0; argIdx < eventDecl.arguments.length; argIdx++) {
       const argDef = eventDecl.arguments[argIdx];
 
       if (args.length > argIdx) {
-        fmt[argDef.exportedName] = args[argIdx];
+        fmt[argDef.exportedName ?? `arg${argIdx + 1}`] = args[argIdx];
       } else {
         fmt[`arg${argIdx + 1}`] = args[argIdx];
       }
@@ -46,6 +47,10 @@
   async function subscribeMethod() {
     eventDecl.subscribed = !eventDecl.subscribed;
     const connection = await getConnection(hub);
+    if (!connection) {
+      eventDecl.subscribed = false;
+      return;
+    }
     if (eventDecl.subscribed) {
       connection.on(eventDecl.name, (...args) => {
         messages.push({ date: new Date(), data: convertResponse(args) });

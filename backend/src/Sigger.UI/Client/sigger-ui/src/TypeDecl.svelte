@@ -18,7 +18,7 @@
     }
 </script>
 
-{#if isComplexOrEnum(type)}
+{#if type && isComplexOrEnum(type)}
     <a href="#{getModelId(hub, type)}">{type.exportedType}</a>
 {:else}
     <pre><code>{fmtType()} </code></pre>
